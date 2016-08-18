@@ -1,0 +1,13 @@
+INPUT(
+./release/main.o
+./release/mainwindow.o
+./release/question_form.o
+./release/selectorbar.o
+./release/itemdialog.o
+./release/merge_dialog.o
+./release/moc_mainwindow.o
+./release/moc_question_form.o
+./release/moc_selectorbar.o
+./release/moc_itemdialog.o
+./release/moc_merge_dialog.o
+);

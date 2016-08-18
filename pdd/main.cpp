@@ -6,8 +6,6 @@
 int main(int argc, char *argv[]) {
 
     try {
-        // Вызов конструктора DataBox (загрузка ресурсов).
-        pdd::DataBox& box = pdd::DataBox::inst();
 
         QApplication a(argc, argv);
         a.setApplicationName("pdd-client");

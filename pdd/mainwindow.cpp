@@ -79,6 +79,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     //qDebug() << "Версия протокола " << Config::inst().protocolVersion;
     //qDebug() << "Extra off " << Config::inst().extraOff;
+    //qDebug() << "use-common-db: " << int(Config::inst().useSqliteDatabase);
+
+    // Вызов конструктора DataBox (загрузка ресурсов).
+    pdd::DataBox& box = pdd::DataBox::inst();
 
     if(!Config::inst().localMode) {
         QString serverAddr = parser.value(addrOption);
@@ -108,7 +112,6 @@ MainWindow::MainWindow(QWidget *parent)
     addDockWidget(Qt::TopDockWidgetArea, dock);
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onSecondElapsed()));
-    DataBox& box = DataBox::inst();
     connect(&box, SIGNAL(taskStarted()), this, SLOT(onTaskStarted()));
     connect(&box, SIGNAL(successTask()), this, SLOT(onTaskEnded()));
     connect(&box, SIGNAL(failTask()), this, SLOT(onTaskEnded()));

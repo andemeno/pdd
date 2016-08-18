@@ -1,0 +1,13 @@
+INPUT(
+./debug/main.o
+./debug/mainwindow.o
+./debug/question_form.o
+./debug/selectorbar.o
+./debug/itemdialog.o
+./debug/merge_dialog.o
+./debug/moc_mainwindow.o
+./debug/moc_question_form.o
+./debug/moc_selectorbar.o
+./debug/moc_itemdialog.o
+./debug/moc_merge_dialog.o
+);
