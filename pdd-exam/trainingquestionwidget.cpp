@@ -5,13 +5,14 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <answerwidget.h>
+#include "programconfig.h"
 
 using namespace pdd;
 
 TrainingQuestionWidget::TrainingQuestionWidget(const uint n, QWidget *parent)
     : QWidget(parent)
     , number(n)
-    , rightAnswer(DataBox::inst().getQuestion(number).getAnswer())
+    , rightAnswer(DataBox::inst().getTaskQuestion(number).get_answer())
     , choise(0)
     , helpLabel(0) {
     makeGUI();
@@ -82,7 +83,7 @@ void TrainingQuestionWidget::onHelpButton() {
 
 
 void TrainingQuestionWidget::makeGUI() {
-    const Question& question = DataBox::inst().getQuestion(number);
+    const pdd::question& quest = DataBox::inst().getTaskQuestion(number);
 
     QVBoxLayout* layout = new QVBoxLayout;
 
@@ -94,7 +95,8 @@ void TrainingQuestionWidget::makeGUI() {
 
     // Иллюстрация
     QLabel* pixmapLabel = new QLabel;
-    pixmapLabel->setPixmap( DataBox::inst().getImage(number) );
+    QString image_name = QString("%1%2").arg(Config::inst().abPathToImages.c_str()).arg(quest.get_image_name());
+    pixmapLabel->setPixmap( QPixmap(image_name));
     QHBoxLayout* pixmapLayout = new QHBoxLayout;
     pixmapLayout->addWidget(pixmapLabel, 0, Qt::AlignHCenter|Qt::AlignTop);
     layout->addLayout( pixmapLayout );
@@ -106,7 +108,7 @@ void TrainingQuestionWidget::makeGUI() {
     layout->addLayout( rhbox );
 
     // Вопрос
-    QLabel* taskLabel = new QLabel(question.getTask());
+    QLabel* taskLabel = new QLabel(quest.get_task());
     QHBoxLayout* taskLayout = new QHBoxLayout;
     taskLayout->addWidget( taskLabel );
     taskLabel->setWordWrap( true );
@@ -115,7 +117,7 @@ void TrainingQuestionWidget::makeGUI() {
     // Варианты ответов
     QGridLayout* grid = new QGridLayout;
     grid->setColumnStretch( 1, 1 );
-    QStringList answerStrs = question.getAnswers();
+    QStringList answerStrs = quest.get_answers();
     for( int i = 0; i < answerStrs.size(); ++i ) {
         //QLabel* w = new QLabel(answerStrs[i]);
         AnswerWidget* w = new AnswerWidget(answerStrs[i], i+1, rightAnswer);
@@ -137,8 +139,8 @@ void TrainingQuestionWidget::makeGUI() {
 
     // Пояснение
     QHBoxLayout* helpLayout = new QHBoxLayout;
-    QString comment(question.getComment());
-    comment.append(QString("\nПравильный ответ - %1").arg(question.getAnswer()));
+    QString comment(quest.get_comment());
+    comment.append(QString("\nПравильный ответ - %1").arg(quest.get_answer()));
     helpLabel = new QLabel(comment);
     helpLabel->setWordWrap(true);
     helpLabel->setFrameStyle( QFrame::Panel|QFrame::Sunken );

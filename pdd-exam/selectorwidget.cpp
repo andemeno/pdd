@@ -66,7 +66,7 @@ void SelectorWidget::makeGUI() {
     mainLayout->addWidget( btn );
     abThemesCombo = new QComboBox;
     connect(abThemesCombo, SIGNAL(activated(int)), btn, SLOT(click()));
-    QStringList abthemes = DataBox::inst().getThemes(true);
+    QStringList abthemes = DataBox::inst().getThemes();
     for(int i=0; i<abthemes.size(); i++) {
         abThemesCombo->addItem( abthemes[i] );
     }

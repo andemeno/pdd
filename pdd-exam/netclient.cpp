@@ -120,11 +120,12 @@ void NetClient::onExtraTask(uint count) {
 
 void NetClient::sendEndTaskPackets() {
     QDataStream out(socket);
-    const DataBox::questions_array& questions = DataBox::inst().getQuestions();
-    const uint count = questions.size();
-    for(uint n=0; n<count; ++n) {
-        if(DataBox::inst().getAnswer(n)==-1) {
-            sendAnswerPacket(n, questions[n].getNumber(), 255, DataBox::inst().getQuestion(n).getAnswer());
+    //const DataBox::questions_array& questions = DataBox::inst().getQuestions();
+    const uint count = DataBox::inst().getTaskQuestionsCount();
+    for(uint n = 0; n < count; ++n) {
+        if(DataBox::inst().getAnswer(n) == -1) {
+            const question& quest = DataBox::inst().getTaskQuestion(n);
+            sendAnswerPacket(n, quest.get_id(), 255, quest.get_answer());
         }
     }
     quint8 b = 0;

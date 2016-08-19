@@ -17,7 +17,7 @@ SmallQuestionEnumWidget::SmallQuestionEnumWidget(QWidget *parent)
 
     lastRow = 0;
     lastColumn = 0;
-    uint count = DataBox::inst().getQuestions().size();
+    uint count = DataBox::inst().getTaskQuestionsCount();
     for( uint n = 0; n < count; ++n ) {
 
         QLabel* label = new QLabel("   ");

@@ -2,6 +2,7 @@
 #include "databox.h"
 #include <QLabel>
 #include <QPainter>
+#include "programconfig.h"
 
 using namespace pdd;
 
@@ -9,9 +10,9 @@ SmallQuestionWidget::SmallQuestionWidget(const uint num, QWidget *parent)
     : QWidget(parent)
     , number( num )
     , userAnswer(-1)
-    , rightAnswer( DataBox::inst().getQuestion(number).getAnswer() )
-    , name(DataBox::inst().getQuestion(number).getTask().left(20))
-    , image( DataBox::inst().getImage(number) )
+    , rightAnswer( DataBox::inst().getTaskQuestion(number).get_answer() )
+    , name(DataBox::inst().getTaskQuestion(number).get_task().left(20))
+    , image( QString("%1%2").arg(Config::inst().abPathToImages.c_str()).arg(DataBox::inst().getTaskQuestion(number).get_image_name()))
     , color( "lightgrey" )
     , resultColor( "white" )
     , taskEnded( false ) {

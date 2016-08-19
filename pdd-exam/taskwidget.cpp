@@ -83,9 +83,10 @@ void TaskWidget::showEnum() {
 void TaskWidget::onExtraTask() {
     uint count = DataBox::inst().getExtraCount();
 
-    const DataBox::questions_array& questions = DataBox::inst().getQuestions();
-    uint firstExtNumber = questions.size() - count;
-    for( uint i = firstExtNumber; i < questions.size(); ++i ) {
+    //const DataBox::questions_array& questions = DataBox::inst().getQuestions();
+    const uint task_questions_count = DataBox::inst().getTaskQuestionsCount();
+    uint firstExtNumber = task_questions_count - count;
+    for( uint i = firstExtNumber; i < task_questions_count; ++i ) {
         QuestionWidget* w = new QuestionWidget(i);
         connect( w, SIGNAL(prevQuestion(uint)), this, SLOT(onPrevQuestion(uint)) );
         connect( w, SIGNAL(nextQuestion(uint)), this, SLOT(onNextQuestion(uint)) );
@@ -122,8 +123,9 @@ void TaskWidget::makeGUI() {
     connect(enumWidget, SIGNAL(selectQuestion(int)), this, SLOT(onShowQuestionWidget(int)));
     connect(enumWidget, SIGNAL(selectQuestion(int)), smallEnumWidget, SLOT(onSelectQuestion(int)));
 
-    const DataBox::questions_array& questions = DataBox::inst().getQuestions();
-    for( uint i = 0; i < questions.size(); ++i ) {
+    //const DataBox::questions_array& questions = DataBox::inst().getQuestions();
+    const uint task_questions_count = DataBox::inst().getTaskQuestionsCount();
+    for( uint i = 0; i < task_questions_count; ++i ) {
         QuestionWidget* w = new QuestionWidget(i);
         connect( w, SIGNAL(prevQuestion(uint)), this, SLOT(onPrevQuestion(uint)) );
         connect( w, SIGNAL(nextQuestion(uint)), this, SLOT(onNextQuestion(uint)) );

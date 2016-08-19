@@ -16,26 +16,16 @@ private:
     , armNumber(1)
     , databaseName("../pdd_resources/pdd.db")
     , abPathToImages("../pdd_resources/images/ab/")
-    , cdPathToImages("../pdd_resources/images/cd/")
 
-    , abImageArchiveName( "../pdd_resources/ab/image.dat" )
-    , abDllMainName( "../pdd_resources/ab/text.dat" )
-    , abDllCommentName( "../pdd_resources/ab/comment.dat" )
-
-    , cdImageArchiveName( "../pdd_resources/cd/image.dat" )
-    , cdDllMainName( "../pdd_resources/cd/text.dat" )
-    , cdDllCommentName( "../pdd_resources/cd/comment.dat" )
-
-    , unzipPassword( "holy fucking sheet!" )
     , succesedTaskImage( "../pdd_resources/done.jpg" )
     , failedTaskImage( "../pdd_resources/fail.jpg" )
     , cheat(false)
     , usePromptFromFile(false)
     , use_prompt_picture(true)
-    , protocolVersion(0)
+    , protocolVersion(1)
     , viewOnlyWrong(false)
-    , useCompressedImages(true)
-    , useSqliteDatabase(false) {
+    , useCompressedImages(false)
+    , useSqliteDatabase(true) {
 
         largePromptText0.append("С целью проведения теоретического экзамена Вам предложен экзаменационный билет, состоящий из 20 (или 40) вопросов.\n");
         largePromptText0.append("На каждый вопрос предложено несколько вариантов ответов, один из которых правильный.\n");
@@ -86,19 +76,7 @@ public:
     /// Имя общей (для всех категорий) базы данных вопросов
     std::string databaseName;
     std::string abPathToImages; /// Путь к несжатыми иллюстрациями
-    std::string cdPathToImages; /// Путь к несжатыми иллюстрациями
 
-    /// Категория AB (формат PE)
-    std::string abImageArchiveName; /// Имя архива с иллюстрациями.
-    std::string abDllMainName; /// Имя файла со структурой и содержимым заданий.
-    std::string abDllCommentName; /// Имя файла с пояснениями к заданиям.
-
-    /// Категория CD (формат PE)
-    std::string cdImageArchiveName; /// Имя архива с иллюстрациями.
-    std::string cdDllMainName; /// Имя файла со структурой и содержимым заданий.
-    std::string cdDllCommentName; /// Имя файла с пояснениями к заданиям.
-
-    std::string unzipPassword; ///Пароль для распаковки иллюстраций из архива
     std::string succesedTaskImage;
     std::string failedTaskImage;
 

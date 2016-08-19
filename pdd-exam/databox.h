@@ -53,12 +53,6 @@ private:
      * что и тематический блок, при ответе на вопросы которого была допущена ошибка или не дан ответ.
      */
 
-    enum CategoryType {
-        category_none,
-        category_ab,
-        category_cd
-    };
-
     /// Структура заданий по каждой из категорий AB и CD:
     typedef std::vector<uint> theme_block; /// Идентификаторы вопросов одного тематического блока
     typedef std::vector<theme_block> group; /// Тематические блоки вопросов из одной группы
@@ -66,7 +60,7 @@ private:
 
     struct Category {
         Category();
-        bool load_from_sql(const std::string& dbName, const QString category_suffix);
+        bool load_from_sql(const std::string& dbName);
         bool load(const std::string& mainDll, const std::string& dllComment);
         uint groupsCount; /// количество групп
         uint themeBlocksCount; /// количество тематических блоков
@@ -135,7 +129,7 @@ public:
      */
     void initByTheme(const uint themeNumber);
 
-    void getTaskQuestionsCount() const;
+    uint getTaskQuestionsCount() const;
 
     /** Идентификаторы вопросов текущего билета */
     std::vector<uint> getTaskQuestions() const;

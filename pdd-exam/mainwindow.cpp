@@ -14,6 +14,7 @@
 #include <QTime>
 #include "taskwidget.h"
 #include "trainingwidget.h"
+#include <stdexcept>
 
 using namespace pdd;
 
@@ -41,14 +42,9 @@ MainWindow::MainWindow(QWidget *parent)
     armNumberOption.setDescription("Номер рабочего места");
 
     QCommandLineOption cheatOption("cheat");
-    QCommandLineOption protocolVersion("p");
-    protocolVersion.setValueName("proto");
-    protocolVersion.setDefaultValue("0");
 
     QCommandLineOption extraOff("extraoff");
     QCommandLineOption viewOnlyWrong("onlywrong");
-    QCommandLineOption useUnzipped("use-unzipped");
-    QCommandLineOption useCommonDb("use-common-db");
     QCommandLineOption useStaticPrompt("use-static-prompt");
     QCommandLineOption useTextPrompt("use-text-prompt");
 
@@ -57,11 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
     parser.addOption(addrOption);
     parser.addOption(armNumberOption);
     parser.addOption(cheatOption);
-    parser.addOption(protocolVersion);
     parser.addOption(extraOff);
     parser.addOption(viewOnlyWrong);
-    parser.addOption(useUnzipped);
-    parser.addOption(useCommonDb);
     parser.addOption(useStaticPrompt);
     parser.addOption(useTextPrompt);
     parser.process(*qApp);
@@ -69,11 +62,8 @@ MainWindow::MainWindow(QWidget *parent)
     Config::inst().localMode = !parser.isSet(addrOption);
     Config::inst().armNumber = parser.value(armNumberOption).toUInt();
     Config::inst().cheat = parser.isSet(cheatOption);
-    Config::inst().protocolVersion = parser.value(protocolVersion).toInt();
     Config::inst().extraOff = parser.isSet(extraOff);
     Config::inst().viewOnlyWrong = parser.isSet(viewOnlyWrong);
-    Config::inst().useCompressedImages = !parser.isSet(useUnzipped);
-    Config::inst().useSqliteDatabase = parser.isSet(useCommonDb);
     Config::inst().usePromptFromFile = !parser.isSet(useStaticPrompt);
     Config::inst().use_prompt_picture = !parser.isSet(useTextPrompt);
 
@@ -81,7 +71,9 @@ MainWindow::MainWindow(QWidget *parent)
     //qDebug() << "Extra off " << Config::inst().extraOff;
     //qDebug() << "use-common-db: " << int(Config::inst().useSqliteDatabase);
 
-    // Вызов конструктора DataBox (загрузка ресурсов).
+    // Загрузка вопросов
+    if(!pdd::DataBox::inst().load())
+        throw std::runtime_error("Ошибка при загрузке базы данных");
     pdd::DataBox& box = pdd::DataBox::inst();
 
     if(!Config::inst().localMode) {
@@ -187,7 +179,7 @@ void MainWindow::onSelectTrainig(bool category_ab, uint themeNumber) {
 
     QString headerText =
       QString("ознакомление с вопросами по теме\n%1").
-        arg(DataBox::inst().getTheme(themeNumber, category_ab));
+        arg(DataBox::inst().getTheme(themeNumber));
     headerWidget->setMainText(headerText);
     setTrainingWidget();
 }
@@ -253,7 +245,7 @@ void MainWindow::setPromptWidget() {
 }
 
 void MainWindow::setTaskWidget() {
-    DataBox::inst().initCommonTask(questionsCount, category);
+    DataBox::inst().initCommonTask(questionsCount);
     TaskWidget* w = new TaskWidget;
     setCentralWidget(w);
     DataBox::inst().startTask();
@@ -261,7 +253,7 @@ void MainWindow::setTaskWidget() {
 }
 
 void MainWindow::setTrainingWidget() {
-    DataBox::inst().initByTheme(themeNum, category);
+    DataBox::inst().initByTheme(themeNum);
     TrainingWidget* w = new TrainingWidget;
     setCentralWidget(w);
     state = state_view_results;

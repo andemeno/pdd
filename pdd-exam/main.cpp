@@ -1,15 +1,13 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <iostream>
-#include "databox.h"
 
 int main(int argc, char *argv[]) {
 
     try {
-
         QApplication a(argc, argv);
-        a.setApplicationName("pdd-client");
-        a.setApplicationVersion("0.1");
+        a.setApplicationName("pdd-exam");
+        a.setApplicationVersion("1.0");
         a.setApplicationDisplayName("ПДД клиент");
         pdd::MainWindow w;
         w.show();

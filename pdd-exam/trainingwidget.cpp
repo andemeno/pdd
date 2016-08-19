@@ -33,8 +33,9 @@ void TrainingWidget::makeGUI() {
 
     EnumLabelWidget* enumWidget = new EnumLabelWidget;
     stacked = new QStackedLayout;
-    const DataBox::questions_array& questions = DataBox::inst().getQuestions();
-    for( uint i = 0; i < questions.size(); ++i ) {
+    const uint task_questions_count = DataBox::inst().getTaskQuestionsCount();
+    //const DataBox::questions_array& questions = DataBox::inst().getQuestions();
+    for( uint i = 0; i < task_questions_count; ++i ) {
         TrainingQuestionWidget* w = new TrainingQuestionWidget(i);
         connect( w, SIGNAL(prevQuestion(uint)), this, SLOT(onPrevQuestion(uint)) );
         connect( w, SIGNAL(nextQuestion(uint)), this, SLOT(onNextQuestion(uint)) );
@@ -53,7 +54,7 @@ EnumLabelWidget::EnumLabelWidget(QWidget *parent/* = 0*/)
     :QWidget(parent) {
     QGridLayout* grid = new QGridLayout;
     group = new QButtonGroup;
-    uint count = DataBox::inst().getQuestions().size();
+    uint count = DataBox::inst().getTaskQuestionsCount();//DataBox::inst().getQuestions().size();
     int row = 0; int column = 0;
     for(uint n=0; n<count; ++n) {
         QPushButton* btn = new QPushButton(QString("%1").arg(n+1));

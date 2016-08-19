@@ -1,7 +1,7 @@
 #include "databox.h"
 #include "programconfig.h"
 #include <pdd_db.h>
-
+#include <QTime>
 #include <stdexcept>
 #include <fstream>
 #include <algorithm>
@@ -14,7 +14,6 @@ using namespace pdd;
 
 DataBox::DataBox(QObject *parent)
     : QObject(parent)
-    , categoryType(category_none)
     , totalAnswers(0)
     , totalExtraQuestions(0)
     , timer(this)
@@ -22,8 +21,8 @@ DataBox::DataBox(QObject *parent)
     , elapsedTaskTime(0)
     , totalElapsedTaskTime(0) {
 
-    if(!load())
-        throw std::runtime_error( "Error on load pdd_resources." );
+    //if(!load())
+    //    throw std::runtime_error( "Error on load pdd_resources." );
 
     connect( &timer, SIGNAL(timeout()), this, SLOT(onTimeoutTask()) );
     connect( this, SIGNAL(extraTask(uint)), this, SLOT(initExtraTask()) );
@@ -35,31 +34,12 @@ DataBox::Category::Category()
     , themeBlocksCount(40)
     , questionsInThemeBlock(5)
     , loaded(false) {
-
-    /*uint id = 217;
-    uint groupNumber = 0;
-    uint themeBlockNumber = 0;
-    for( Groups::iterator g = groups.begin(); g != groups.end(); ++g ) {
-        QuestionsGroup& group = *g;
-        group.resize(themeBlocksCount);
-        for( QuestionsGroup::iterator b = group.begin(); b != group.end(); ++b ) {
-            questions_array& block = *b;
-            block.resize(questionsInThemeBlock);
-            for( questions_array::iterator q = block.begin(); q != block.end(); ++q ) {
-                Question& question = *q;
-                question = Question(groupNumber, themeBlockNumber);
-                id++;
-            }
-            ++themeBlockNumber;
-        }
-        ++groupNumber;
-    }*/
 }
 
-bool DataBox::Category::load_from_sql(const std::string& dbName, const QString category_suffix) {
+bool DataBox::Category::load_from_sql(const std::string& dbName) {
 
     // Загрузка вопросов и тем из базы
-    doc.reset(new pdd_db(dbName));
+    doc.reset(new pdd_db(dbName.c_str()));
     loaded = doc->load();
     if(!loaded) return false;
 
@@ -90,7 +70,7 @@ bool DataBox::Category::load_from_sql(const std::string& dbName, const QString c
 }
 
 bool DataBox::load() {
-    return ab.load_from_sql(Config::inst().databaseName, "ab");
+    return ab.load_from_sql(Config::inst().databaseName);
 }
 
 std::pair<uint, uint> DataBox::get_block_group_pair(const uint qid) const {
@@ -215,13 +195,13 @@ void DataBox::initByTheme(const uint themeNumber) {
     totalAnswers = 0;
     totalExtraQuestions = 0;
 
-    const uint quest_count = category->doc->get_questions_count(themeNumber);
+    const uint quest_count = category->doc->get_questions_count(themeNumber+1);
     for(uint n = 1; n <= quest_count; ++n) {
-        task.push_back(category->doc->get_question(th, n).get_id());
+        task.push_back(category->doc->get_question(themeNumber+1, n).get_id());
     }
 }
 
-void DataBox::getTaskQuestionsCount() const {
+uint DataBox::getTaskQuestionsCount() const {
     return task.size();
 }
 
@@ -376,7 +356,7 @@ void DataBox::onTimeoutTask() {
                     return;
                 }
 
-                std::pair<std::map<uint, uint>::iterator, bool> result = errors.insert(get_block_group_pair(task[number].qid));
+                std::pair<std::map<uint, uint>::iterator, bool> result = errors.insert(get_block_group_pair(task[n].qid));
 
                 if( !result.second ) {
                     emit failTask(); // допущены две ошибки и/или пропуск в вопросах одного тематического блока
@@ -406,7 +386,7 @@ void DataBox::onTimeoutTask() {
 
         for( uint n = 0; n < task.size(); ++n ) {
             if( task[n].answer == -1 ) {
-                std::pair<std::map<uint, uint>::iterator, bool> result = errors.insert(get_block_group_pair(task[number].qid));
+                std::pair<std::map<uint, uint>::iterator, bool> result = errors.insert(get_block_group_pair(task[n].qid));
 
                 if( !result.second ) {
                     emit failTask(); // допущены две ошибки и/или пропуск в вопросах одного тематического блока

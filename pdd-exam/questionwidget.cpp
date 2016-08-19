@@ -68,7 +68,7 @@ void QuestionWidget::onConfirmButton() {
     emit answerQuestion(number, choise);
     emit showEnum();
 
-    DataBox::inst().setAnswer( number, choise );
+    DataBox::inst().setAnswer(number, choise);
 }
 
 
@@ -108,7 +108,7 @@ void QuestionWidget::keyPressEvent(QKeyEvent* event) {
 
     if(Config::inst().cheat) {
         if(event->key() == Qt::Key_Space) {
-            onSelectAnswer(DataBox::inst().getQuestion(number).getAnswer());
+            onSelectAnswer(DataBox::inst().getTaskQuestion(number).get_answer());
             onConfirmButton();
         }
     }
@@ -118,14 +118,15 @@ void QuestionWidget::keyPressEvent(QKeyEvent* event) {
 
 
 void QuestionWidget::makeGUI() {
-    const Question& question = DataBox::inst().getQuestion(number);
-    rightAnswer = question.getAnswer();
+    const pdd::question& quest = DataBox::inst().getTaskQuestion(number);
+    rightAnswer = quest.get_answer();
 
     QVBoxLayout* layout = new QVBoxLayout;
 
     // Иллюстрация
     QLabel* pixmapLabel = new QLabel;
-    pixmapLabel->setPixmap( DataBox::inst().getImage(number) );
+    QString image_name = QString("%1%2").arg(Config::inst().abPathToImages.c_str()).arg(quest.get_image_name());
+    pixmapLabel->setPixmap( QPixmap(image_name));
     QHBoxLayout* pixmapLayout = new QHBoxLayout;
     pixmapLayout->addWidget(pixmapLabel, 0, Qt::AlignHCenter|Qt::AlignTop);
     layout->addLayout( pixmapLayout );
@@ -137,7 +138,7 @@ void QuestionWidget::makeGUI() {
     layout->addLayout( rhbox );
 
     // Вопрос
-    QLabel* taskLabel = new QLabel(question.getTask());
+    QLabel* taskLabel = new QLabel(quest.get_task());
     QHBoxLayout* taskLayout = new QHBoxLayout;
     taskLayout->addWidget( taskLabel );
     taskLabel->setWordWrap( true );
@@ -146,7 +147,7 @@ void QuestionWidget::makeGUI() {
     // Варианты ответов
     QGridLayout* grid = new QGridLayout;
     grid->setColumnStretch( 1, 1 );
-    QStringList answerStrs = question.getAnswers();
+    QStringList answerStrs = quest.get_answers();
     for( int i = 0; i < answerStrs.size(); ++i ) {
         AnswerWidget* w = new AnswerWidget(answerStrs[i], i+1, rightAnswer);
         connect(w, SIGNAL(select(uint)), this, SLOT(onSelectAnswer(uint)));
@@ -167,8 +168,8 @@ void QuestionWidget::makeGUI() {
 
     // Пояснение
     QHBoxLayout* helpLayout = new QHBoxLayout;
-    QString comment(question.getComment());
-    comment.append(QString("\nПравильный ответ - %1").arg(question.getAnswer()));
+    QString comment(quest.get_comment());
+    comment.append(QString("\nПравильный ответ - %1").arg(quest.get_answer()));
     helpLabel = new QLabel(comment);
     helpLabel->setWordWrap(true);
     helpLabel->setFrameStyle( QFrame::Panel|QFrame::Sunken );
@@ -196,7 +197,7 @@ void QuestionWidget::makeGUI() {
     // Кнопка перехода к следующему вопросу
     nextButton = new QPushButton("ДАЛЬШЕ");
     footer->addWidget(nextButton, 0, Qt::AlignRight);
-    layout->addLayout( footer );
+    layout->addLayout(footer);
 
     setLayout(layout);
 }
