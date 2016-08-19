@@ -7,59 +7,60 @@
 
 using namespace pdd;
 
-pdd_db::pdd_db() {}
+pdd_db::pdd_db(const QString& db)
+    : db_name(db) {}
 
 
-bool pdd_db::load(const QString& db_name) {
+bool pdd_db::load() {
 
     // Установка соединения с базой данных
-    sdb = QSqlDatabase::addDatabase("QSQLITE");
+    QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");
     sdb.setDatabaseName(db_name);
     if(!sdb.open()) {
        qDebug() << db_name << " " << sdb.lastError().text();
        return false;
     }
 
-    // Чтение таблицы themes
-    QSqlQuery selectThemes("SELECT * FROM themes_ab");
-    if(!selectThemes.exec()) {
-        qDebug() << selectThemes.lastError().text();
-        return false;
-    }
-    while(selectThemes.next()) {
-        themes << selectThemes.value(1).toString();
-        questions_by_themes.push_back(std::vector<uint>(selectThemes.value(2).toUInt()));
-        //qDebug() << themes.back();
-    }
-
-    // Чтение таблицы questions
-    QSqlQuery sq("SELECT * FROM questions_ab");
-    if(!sq.exec()) {
-        qDebug() << sq.lastError().text();
-        return false;
-    }
-
-    while(sq.next()) {
-        question quest(sq.value(0).toUInt());
-        quest.set_task(sq.value(1).toString());
-        uint vars_count = sq.value(2).toUInt();
-        quest.set_answer(sq.value(3).toUInt());
-        quest.set_comment(sq.value(4).toString());
-        for(uint a = 0; a < vars_count; ++a) {
-            quest.add_answer(sq.value(a+5).toString());
+    { // Чтение таблицы themes
+        QSqlQuery selectThemes("SELECT * FROM themes_ab");
+        if(!selectThemes.exec()) {
+            qDebug() << selectThemes.lastError().text();
+            return false;
         }
-        quest.set_image_name(sq.value(10).toString());
-        quest.set_theme_number(sq.value(11).toUInt());
-        quest.set_number(sq.value(12).toUInt());
-        questions.insert(std::make_pair(quest.get_id(), quest));
-        questions_by_themes[quest.get_theme_number()-1][quest.get_number()-1] = quest.get_id();
+        while(selectThemes.next()) {
+            themes << selectThemes.value(1).toString();
+            questions_by_themes.push_back(std::vector<uint>(selectThemes.value(2).toUInt()));
+            //qDebug() << themes.back();
+        }
     }
+
+    { // Чтение таблицы questions
+        QSqlQuery sq("SELECT * FROM questions_ab");
+        if(!sq.exec()) {
+            qDebug() << sq.lastError().text();
+            return false;
+        }
+
+        while(sq.next()) {
+            question quest(sq.value(0).toUInt());
+            quest.set_task(sq.value(1).toString());
+            uint vars_count = sq.value(2).toUInt();
+            quest.set_answer(sq.value(3).toUInt());
+            quest.set_comment(sq.value(4).toString());
+            for(uint a = 0; a < vars_count; ++a) {
+                quest.add_answer(sq.value(a+5).toString());
+            }
+            //quest.set_image_name(sq.value(10).toString());
+            quest.set_theme_number(sq.value(11).toUInt());
+            quest.set_number(sq.value(12).toUInt());
+            questions.insert(std::make_pair(quest.get_id(), quest));
+            questions_by_themes[quest.get_theme_number()-1][quest.get_number()-1] = quest.get_id();
+        }
+    }
+
+    sdb.removeDatabase(db_name);
 
     return true;
-}
-
-void pdd_db::close() {
-    sdb.close();
 }
 
 uint pdd_db::get_themes_count() const {
@@ -148,6 +149,14 @@ void pdd_db::remove_question(const uint th_n, const uint n) {
 }
 
 bool pdd_db::save_changes() {
+    // Установка соединения с базой данных
+    QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");
+    sdb.setDatabaseName(db_name);
+    if(!sdb.open()) {
+       qDebug() << db_name << " " << sdb.lastError().text();
+       return false;
+    }
+
     // удаление removed_quests
     for(std::vector<uint>::iterator i = removed_quests.begin(); i != removed_quests.end(); ++i) {
         QString str_query = QString("DELETE FROM questions_ab WHERE rowid=%1;").arg(*i);
@@ -177,7 +186,7 @@ bool pdd_db::save_changes() {
         queries << QString("UPDATE questions_ab SET ans_v3=\"%1\" WHERE id=%2;").arg(answers[2]).arg(*i);
         queries << QString("UPDATE questions_ab SET ans_v4=\"%1\" WHERE id=%2;").arg(answers[3]).arg(*i);
         queries << QString("UPDATE questions_ab SET ans_v5=\"%1\" WHERE id=%2;").arg(answers[4]).arg(*i);
-        queries << QString("UPDATE questions_ab SET image=\"%1\" WHERE id=%2;").arg(q.get_image_name()).arg(*i);
+        //queries << QString("UPDATE questions_ab SET image=\"%1\" WHERE id=%2;").arg(q.get_image_name()).arg(*i);
         queries << QString("UPDATE questions_ab SET theme_num=%1 WHERE id=%2;").arg(q.get_theme_number()).arg(*i);
         queries << QString("UPDATE questions_ab SET in_theme_num=%1 WHERE id=%2;").arg(q.get_number()).arg(*i);
 
@@ -193,6 +202,8 @@ bool pdd_db::save_changes() {
     }
     changed_quests.clear();
 
+    sdb.removeDatabase(db_name);
+
     // todo добавление added_quests
     //for(std::vector<uint>::iterator i = added_quests.begin(); i != added_quests.end(); ++i) {
 
@@ -201,29 +212,3 @@ bool pdd_db::save_changes() {
 
     return true;
 }
-
-
-/*
-
-        QString str_query = QString("UPDATE questions_ab SET "\
-             "task=\"%1\", vars_count=%2, right_ans=%3, "\
-             "comment=\"%4\", ans_v1=\"%5\", ans_v2=\"%6\", "\
-             "ans_v3=\"%7\", ans_v4=\"%8\", ans_v5=\"%9\", "\
-             "image=%10, theme_num=%11, in_theme_num=%12 "\
-             "WHERE id=%13;"
-                ).arg(q.get_task()
-                ).arg(vars_count
-                ).arg(q.get_answer()
-                ).arg(q.get_comment()
-                ).arg(answers[0]
-                ).arg(answers[1]
-                ).arg(answers[2]
-                ).arg(answers[3]
-                ).arg(answers[4]
-                ).arg(q.get_image_name()
-                ).arg(q.get_theme_number()
-                ).arg(q.get_number()
-                ).arg(q.get_id());
-
-
-*/

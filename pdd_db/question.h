@@ -26,7 +26,6 @@ public:
     void set_task(const QString& _task);
     QString get_comment() const;
     void set_comment(const QString& _comment);
-    void set_image_name(const QString& name);
     QString get_image_name() const;
     uint get_answer() const;
     void set_answer(const uint _answer);
@@ -41,8 +40,7 @@ private:
     uint theme_number; /// Номер темы (начиная с 1)
     QString task; /// Задание (текст вопроса)
     QStringList answers; /// Варианты ответов
-    QString comment; /// Комментарий (обЪяснение) к заданию
-    //QString image_name; /// Имя файла с иллюстрацией
+    QString comment; /// Комментарий (объяснение) к заданию
     uint answer; /// Номер правильного ответа
 };
 

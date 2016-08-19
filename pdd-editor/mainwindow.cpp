@@ -8,15 +8,18 @@
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow) {
+    ui(new Ui::MainWindow)
+    , work_dir("../work-resources/")
+    , doc(work_dir + "pdd.db") {
     ui->setupUi(this);
 
     // todo название базы спрашивать у опертора и передавать в командной строке
-    if(!doc.load("../pdd_resources/pdd.db")) {
-        statusBar()->showMessage("Ошибка при загрузке базы данных");
+    if(!doc.load()) {
+        statusBar()->showMessage("Ошибка при загрузке ../work-resources/pdd.db");
     }
 
     selector = new SelectorBar(&doc);
@@ -46,8 +49,8 @@ void MainWindow::rename_images() {
             const pdd::question& quest = doc.get_question(t, n);
             if(quest.get_image_name().isEmpty())
                 continue;
-            QString file_name = QString("../pdd_resources/images/ab/%1").arg(quest.get_image_name());
-            QString new_name = QString("../pdd_resources/images/ab/%1-%2.jpg").arg(t).arg(n);
+            QString file_name = QString("%1images/ab/%2").arg(work_dir).arg(quest.get_image_name());
+            QString new_name = QString("%1images/ab/%2-%3.jpg").arg(work_dir).arg(t).arg(n);
             QFile file(file_name);
             if(!file.open(QIODevice::ReadWrite)) {
                 qDebug() << "error on open" << file_name;
@@ -62,7 +65,7 @@ void MainWindow::rename_images() {
 }
 
 void MainWindow::on_action_merge_triggered() {
-    QString db_name = QFileDialog::getOpenFileName(this, "Выберете базу данных", "", "*.db");
+    QString db_name = QFileDialog::getOpenFileName(this, "Выберете базу данных", work_dir, "*.db");
     if(db_name.isEmpty()) return;
 
     merge_dialog dialog(doc, this);
@@ -74,55 +77,38 @@ void MainWindow::on_action_merge_triggered() {
     merge_questions(db_name, to_merge);
 }
 
-void MainWindow::on_action_merge_packet_triggered() {
-    /*QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::Directory);
-    if(!dialog.exec()) return;
-    QStringList dirs = dialog.selectedFiles();
-    if(dirs.isEmpty()) return;
-    QDir dir(dirs[0]);
-    QStringList name_filter;
-    name_filter << "*.db";
-    QDir::Filter filter = QDir::Files | QDir::NoDotAndDotDot;
-    QStringList names = dir.entryList(name_filter, filter);*/
-}
-
 void MainWindow::merge_questions(const QString& db_name, const data_to_merge& to_merge) {
-    doc.close();
 
-    pdd::pdd_db changed_db;
-    if(!changed_db.load(db_name)) {
+    /* Загрузка заданных вопросов из db_name и передача их в doc */
+
+    pdd::pdd_db changed_db(db_name);
+    if(!changed_db.load()) {
         statusBar()->showMessage("Ошибка при загрузке базы данных " + db_name);
         return;
     }
 
-    std::vector<pdd::question> new_quests;
+    QString msg;
     for(data_to_merge::const_iterator m = to_merge.begin(); m != to_merge.end(); ++m) {
         const uint thn = m->first;
         const uint from = m->second.first;
         const uint to = m->second.second;
-
         for(uint n = from; n <= to; ++n) {
-            new_quests.push_back(changed_db.get_question(thn, n));
-
+            const pdd::question& q = changed_db.get_question(thn, n);
+            doc.set_question(q);
         }
-    }
-    changed_db.close();
-
-    if(!doc.load("../pdd_resources/pdd.db")) {
-        statusBar()->showMessage("Ошибка при загрузке базы данных");
-    }
-    for(std::vector<pdd::question>::const_iterator q = new_quests.begin(); q != new_quests.end(); ++q) {
-        doc.set_question(*q);
+        msg += QString("тема %1 вопросы %2-%3\n").arg(thn).arg(from).arg(to);
     }
 
-    QString msg;
-    //if(!doc.save_changes()) {
-    //    msg = QString("Ошибка при слиянии данных из %1").arg(db_name);
-    //} else {
-    //    msg = QString("Выполнено слияние данных из %1").arg(db_name);
-    //}
+    QMessageBox msgBox;
+    msgBox.setText(QString("Выполнено слияние данных:\n%1").arg(msg));
 
+    if(!doc.save_changes()) { // сохранение
+        msg = QString("Ошибка при слиянии данных из %1").arg(db_name);
+    } else {
+        msg = QString("Выполнено слияние данных из %1").arg(db_name);
+    }
+
+    msgBox.exec();
     statusBar()->showMessage(msg);
     qDebug() << msg;
 }

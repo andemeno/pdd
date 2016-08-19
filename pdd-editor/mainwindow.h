@@ -23,7 +23,6 @@ private slots:
     void show_question(const uint theme, const uint n);
     void rename_images();
     void on_action_merge_triggered();
-    void on_action_merge_packet_triggered();
 
 private:
 
@@ -31,6 +30,7 @@ private:
     void merge_questions(const QString& db_name, const data_to_merge& to_merge);
 
     Ui::MainWindow *ui;
+    QString work_dir;
     pdd::pdd_db doc;
     SelectorBar* selector;
 };

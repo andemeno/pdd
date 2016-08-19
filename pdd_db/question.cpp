@@ -60,12 +60,7 @@ void question::set_comment( const QString& _comment ) {
     comment.replace('\"', '\'');
 }
 
-void question::set_image_name(const QString& name) {
-    //image_name = name;
-}
-
 QString question::get_image_name() const {
-    //return image_name;
     return QString("%1-%2.jpg").arg(theme_number).arg(number);
 }
 
@@ -91,4 +86,5 @@ void question::set_answers(const QStringList& ans) {
 
 void question::add_answer(const QString& answer_text) {
     answers.push_back(answer_text);
+    answers.back().replace('\"', '\'');
 }

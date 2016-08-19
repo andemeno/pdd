@@ -1,7 +1,6 @@
 #ifndef PDD_DB_H
 #define PDD_DB_H
 
-#include <QtSql>
 #include <QStringList>
 #include <vector>
 #include <map>
@@ -11,10 +10,9 @@ namespace pdd {
 
 class pdd_db {
 public:
-    pdd_db();
+    pdd_db(const QString& db);
 
-    bool load(const QString& db_name);
-    void close();
+    bool load();
 
     uint get_themes_count() const;
     QStringList get_theme_names() const;
@@ -34,7 +32,8 @@ private:
 
     typedef std::map<uint, question> QuestionsMap;
 
-    QSqlDatabase sdb;
+    //QSqlDatabase sdb;
+    QString db_name;
 
     QStringList themes;
     QuestionsMap questions;
