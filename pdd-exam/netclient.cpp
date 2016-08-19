@@ -15,8 +15,7 @@ NetClient::NetClient(const QString &servAddr, const uint servPort, QObject *pare
     , socket(0)
     , cmdCode(-1)
     , questionsCount(0)
-    , categoryType(-1)
-{
+    , categoryType(-1) {
 
     socket = new QTcpSocket(this);
 

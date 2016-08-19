@@ -15,7 +15,7 @@ QuestionsEnumWidget::QuestionsEnumWidget(QWidget *parent)
     makeGUI();
 
     DataBox& box = DataBox::inst();
-    connect( &box, SIGNAL(extraTask(uint)), this, SLOT(onExtraTask()) );
+    connect(&box, SIGNAL(extraTask(uint)), this, SLOT(onExtraTask()));
 }
 
 void QuestionsEnumWidget::onExtraTask() {
@@ -50,10 +50,11 @@ void QuestionsEnumWidget::makeGUI() {
 //    mainLayout->addLayout(rhbox, 0);
 
     gridLayout = new QGridLayout;
-    const DataBox::questions_array& questions = DataBox::inst().getQuestions();
+    //const DataBox::questions_array& questions = DataBox::inst().getQuestions();
+    const uint task_questions_count = DataBox::inst().getTaskQuestionsCount();
     int row = 0;
     int column = 0;
-    for( uint i = 0; i < questions.size(); ++i ) {
+    for( uint i = 0; i < task_questions_count; ++i ) {
         SmallQuestionWidget* w = new SmallQuestionWidget(i);
         connect(w, SIGNAL(selectQuestion(int)), this, SIGNAL(selectQuestion(int)));
         connect(this, SIGNAL(answerQuestion(uint,uint)), w, SLOT(onAnswerQuestion(uint,uint)));

@@ -135,8 +135,16 @@ public:
      */
     void initByTheme(const uint themeNumber);
 
+    void getTaskQuestionsCount() const;
+
     /** Идентификаторы вопросов текущего билета */
     std::vector<uint> getTaskQuestions() const;
+
+    /**
+     * Вопрос из билета с заданным номером
+     * @param number номер вопроса в билете
+     */
+    const question& getTaskQuestion(const uint number) const;
 
     /**
      * Вопрос с заданным идентификатором

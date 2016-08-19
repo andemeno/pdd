@@ -221,12 +221,26 @@ void DataBox::initByTheme(const uint themeNumber) {
     }
 }
 
-std::vector<uint> &DataBox::getTaskQuestions() const {
+void DataBox::getTaskQuestionsCount() const {
+    return task.size();
+}
+
+std::vector<uint> DataBox::getTaskQuestions() const {
     std::vector<uint> result;
     for(std::vector<task_question>::const_iterator t = task.begin(); t != task.end(); ++t) {
         result.push_back(t->qid);
     }
     return result;
+}
+
+const question& DataBox::getTaskQuestion(const uint number) const {
+    if(!ab.loaded)
+        throw std::runtime_error("db is not loaded");
+
+    if(number >= task.size())
+        throw std::runtime_error(QString("Incorrect question index=%1").arg(number).toStdString());
+
+    return ab.doc->get_question(task[number].qid);
 }
 
 const question& DataBox::getQuestion(const uint id) const {
