@@ -13,13 +13,13 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-    , work_dir("../work-resources/")
+    , work_dir("../pdd_resources/")
     , doc(work_dir + "pdd.db") {
     ui->setupUi(this);
 
     // todo название базы спрашивать у опертора и передавать в командной строке
     if(!doc.load()) {
-        statusBar()->showMessage("Ошибка при загрузке ../work-resources/pdd.db");
+        statusBar()->showMessage(QString("Ошибка при загрузке %1%2").arg(work_dir).arg("pdd.db"));
     }
 
     selector = new SelectorBar(&doc);

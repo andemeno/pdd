@@ -26,7 +26,6 @@ class Ui_MainWindow
 {
 public:
     QAction *action_merge;
-    QAction *action_merge_packet;
     QWidget *centralWidget;
     QStatusBar *statusBar;
     QMenuBar *menuBar;
@@ -39,8 +38,6 @@ public:
         MainWindow->resize(1200, 800);
         action_merge = new QAction(MainWindow);
         action_merge->setObjectName(QStringLiteral("action_merge"));
-        action_merge_packet = new QAction(MainWindow);
-        action_merge_packet->setObjectName(QStringLiteral("action_merge_packet"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindow->setCentralWidget(centralWidget);
@@ -49,14 +46,13 @@ public:
         MainWindow->setStatusBar(statusBar);
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1200, 19));
+        menuBar->setGeometry(QRect(0, 0, 1200, 26));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         MainWindow->setMenuBar(menuBar);
 
         menuBar->addAction(menu->menuAction());
         menu->addAction(action_merge);
-        menu->addAction(action_merge_packet);
 
         retranslateUi(MainWindow);
 
@@ -67,7 +63,6 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         action_merge->setText(QApplication::translate("MainWindow", "\320\241\320\273\320\270\321\217\320\275\320\270\320\265...", 0));
-        action_merge_packet->setText(QApplication::translate("MainWindow", "\320\237\320\260\320\272\320\265\321\202\320\275\320\276\320\265 \321\201\320\273\320\270\321\217\320\275\320\270\320\265...", 0));
         menu->setTitle(QApplication::translate("MainWindow", "\320\224\320\265\320\271\321\201\321\202\320\262\320\270\321\217", 0));
     } // retranslateUi
 
