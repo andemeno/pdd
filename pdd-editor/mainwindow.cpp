@@ -9,6 +9,8 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -41,7 +43,7 @@ void MainWindow::show_question(const uint theme, const uint n) {
 }
 
 
-void MainWindow::rename_images() {
+void MainWindow::rename_images_1() {
     uint themes = doc.get_themes_count();
     for(uint t = 1; t <= themes; ++t){
         uint qcount = doc.get_questions_count(t);
@@ -61,6 +63,47 @@ void MainWindow::rename_images() {
                 return;
             }
         }
+    }
+}
+
+void MainWindow::rename_images_2(const QString &path_to_images) {
+
+    QFile table_file(work_dir + "table.json");
+    if(!table_file.open(QIODevice::ReadOnly)) {
+        qDebug() << "error on open file" << table_file.fileName();
+        return;
+    }
+
+    QByteArray data = table_file.readAll();
+    QJsonDocument json_doc = QJsonDocument::fromJson(data);
+    QJsonObject json = json_doc.object();
+    for(uint task = 1; task <= 40; ++task) {
+        QJsonValue value = json[QString("T%1").arg(task)];
+        if(value.isUndefined())
+            continue;
+        // Вопросы билета с номером task
+        QJsonObject json_task = value.toObject();
+        for(uint n = 1; n <= 20; ++n) {
+
+            QJsonValue qv = json_task[QString("%1").arg(n)];
+            if(qv.isUndefined()) continue;
+            QJsonObject json_quest = qv.toObject();
+            int theme_n = json_quest["t"].toInt();
+            int quest_n = json_quest["n"].toInt();
+
+            QString old_name = QString("%1%2-%3.jpg").arg(path_to_images).arg(task).arg(n);
+            QString new_name = QString("%1%2-%3.jpg").arg(path_to_images).arg(theme_n).arg(quest_n);
+            QFile image_file(old_name);
+            if(!image_file.open(QIODevice::ReadWrite)) {
+                qDebug() << "error on open" << old_name;
+                continue;
+            }
+            if(!image_file.rename(new_name)) {
+                qDebug() << "error on rename" << old_name << "to" << new_name;
+                continue;
+            }
+        }
+
     }
 }
 
@@ -113,3 +156,15 @@ void MainWindow::merge_questions(const QString& db_name, const data_to_merge& to
     qDebug() << msg;
 }
 
+
+void MainWindow::on_rename_action_triggered() {
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::DirectoryOnly);
+    dialog.setDirectory(work_dir);
+    if(dialog.exec()) {
+        QStringList paths = dialog.selectedFiles();
+        if(!paths.isEmpty()) {
+            rename_images_2(paths[0]);
+        }
+    }
+}

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.5.1
+** Created by: Qt User Interface Compiler version 5.4.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -26,6 +26,7 @@ class Ui_MainWindow
 {
 public:
     QAction *action_merge;
+    QAction *rename_action;
     QWidget *centralWidget;
     QStatusBar *statusBar;
     QMenuBar *menuBar;
@@ -38,6 +39,8 @@ public:
         MainWindow->resize(1200, 800);
         action_merge = new QAction(MainWindow);
         action_merge->setObjectName(QStringLiteral("action_merge"));
+        rename_action = new QAction(MainWindow);
+        rename_action->setObjectName(QStringLiteral("rename_action"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         MainWindow->setCentralWidget(centralWidget);
@@ -53,6 +56,7 @@ public:
 
         menuBar->addAction(menu->menuAction());
         menu->addAction(action_merge);
+        menu->addAction(rename_action);
 
         retranslateUi(MainWindow);
 
@@ -63,6 +67,7 @@ public:
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", 0));
         action_merge->setText(QApplication::translate("MainWindow", "\320\241\320\273\320\270\321\217\320\275\320\270\320\265...", 0));
+        rename_action->setText(QApplication::translate("MainWindow", "\320\237\320\265\321\200\320\265\320\270\320\274\320\265\320\275\320\276\320\262\320\260\320\275\320\270\320\265...", 0));
         menu->setTitle(QApplication::translate("MainWindow", "\320\224\320\265\320\271\321\201\321\202\320\262\320\270\321\217", 0));
     } // retranslateUi
 

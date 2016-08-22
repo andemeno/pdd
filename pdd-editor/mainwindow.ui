@@ -29,12 +29,18 @@
      <string>Действия</string>
     </property>
     <addaction name="action_merge"/>
+    <addaction name="rename_action"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <action name="action_merge">
    <property name="text">
     <string>Слияние...</string>
+   </property>
+  </action>
+  <action name="rename_action">
+   <property name="text">
+    <string>Переименование...</string>
    </property>
   </action>
  </widget>

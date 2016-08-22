@@ -21,8 +21,10 @@ public:
 
 private slots:
     void show_question(const uint theme, const uint n);
-    void rename_images();
+    void rename_images_1(); // переименование иллюстраций со страрыми названиями в формат <номер темы>-<номер вопроса>.jpg
+    void rename_images_2(const QString& path_to_images); // переименование иллюстраций из формата <номер билета>-<номер вопроса> в формат <номер темы>-<номер вопроса>
     void on_action_merge_triggered();
+    void on_rename_action_triggered();
 
 private:
 
