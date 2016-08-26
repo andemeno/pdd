@@ -44,6 +44,17 @@ bool DataBox::Category::load_from_sql(const std::string& dbName) {
     if(!loaded) return false;
 
     groups.clear();
+    groups.resize(groupsCount);
+    const uint tasks_count = doc->get_tasks_count();
+    for(uint gn = 0; gn < groupsCount; ++gn) {
+        groups[gn].resize(themeBlocksCount);
+        const uint start_number_in_task = gn*questionsInThemeBlock + 1;
+        for(uint task_number = 1; task_number <= tasks_count; ++task_number) {
+            groups[gn][task_number-1] = doc->get_ids_of_block(task_number, start_number_in_task, questionsInThemeBlock);
+        }
+    }
+
+/*    groups.clear();
     group g;
     theme_block block;
     const uint themes_count = doc->get_themes_count();
@@ -65,7 +76,7 @@ bool DataBox::Category::load_from_sql(const std::string& dbName) {
 
     if(groups.size() != groupsCount)
         loaded = false;
-
+*/
     return loaded;
 }
 

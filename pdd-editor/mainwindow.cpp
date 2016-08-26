@@ -11,15 +11,16 @@
 #include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QtSql>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-    , work_dir("../pdd_resources/")
+    , work_dir("../work-resources/")
     , doc(work_dir + "pdd.db") {
     ui->setupUi(this);
 
-    // todo название базы спрашивать у опертора и передавать в командной строке
+    // todo путь к БД спрашивать у опертора и передавать в командной строке
     if(!doc.load()) {
         statusBar()->showMessage(QString("Ошибка при загрузке %1%2").arg(work_dir).arg("pdd.db"));
     }
@@ -45,7 +46,7 @@ void MainWindow::show_question(const uint theme, const uint n) {
 
 void MainWindow::rename_images_1() {
     uint themes = doc.get_themes_count();
-    for(uint t = 1; t <= themes; ++t){
+    for(uint t = 1; t <= themes; ++t) {
         uint qcount = doc.get_questions_count(t);
         for(uint n = 1; n <= qcount; ++n) {
             const pdd::question& quest = doc.get_question(t, n);
@@ -88,8 +89,8 @@ void MainWindow::rename_images_2(const QString &path_to_images) {
             QJsonValue qv = json_task[QString("%1").arg(n)];
             if(qv.isUndefined()) continue;
             QJsonObject json_quest = qv.toObject();
-            int theme_n = json_quest["t"].toInt();
-            int quest_n = json_quest["n"].toInt();
+            int theme_n = json_quest["t"].toString().toInt();
+            int quest_n = json_quest["n"].toString().toInt();
 
             QString old_name = QString("%1%2-%3.jpg").arg(path_to_images).arg(task).arg(n);
             QString new_name = QString("%1%2-%3.jpg").arg(path_to_images).arg(theme_n).arg(quest_n);
@@ -104,6 +105,52 @@ void MainWindow::rename_images_2(const QString &path_to_images) {
             }
         }
 
+    }
+}
+
+void MainWindow::init_table_quests_by_task() {
+
+    // Установка соединения с базой данных
+    QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");
+    sdb.setDatabaseName(work_dir + "pdd.db");
+    if(!sdb.open()) {
+       qDebug() << sdb.databaseName() << " " << sdb.lastError().text();
+       return;
+    }
+
+    QFile table_file(work_dir + "table.json");
+    if(!table_file.open(QIODevice::ReadOnly)) {
+        qDebug() << "error on open file" << table_file.fileName();
+        return;
+    }
+
+    QByteArray data = table_file.readAll();
+    QJsonDocument json_doc = QJsonDocument::fromJson(data);
+    QJsonObject json = json_doc.object();
+    for(uint task = 1; task <= 40; ++task) {
+        QJsonValue value = json[QString("T%1").arg(task)];
+        if(value.isUndefined())
+            continue;
+        // Вопросы билета с номером task
+        QJsonObject json_task = value.toObject();
+        for(uint n = 1; n <= 20; ++n) {
+
+            QJsonValue qv = json_task[QString("%1").arg(n)];
+            if(qv.isUndefined()) continue;
+            QJsonObject json_quest = qv.toObject();
+            int theme_n = json_quest["t"].toString().toInt();
+            int quest_n = json_quest["n"].toString().toInt();
+
+            QString str_query = QString(
+                    "insert into quests_by_task_ab (task_number, in_task_number, theme_number, in_theme_number) values (%1, %2, %3, %4)"
+                    ).arg(task).arg(n).arg(theme_n).arg(quest_n);
+            QSqlQuery query;
+            query.prepare(str_query);
+            if(!query.exec()) {
+                qDebug() << query.executedQuery() << ": " << query.lastError().text();
+                continue;
+            }
+        }
     }
 }
 

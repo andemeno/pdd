@@ -30,7 +30,6 @@ bool pdd_db::load() {
         while(selectThemes.next()) {
             themes << selectThemes.value(1).toString();
             questions_by_themes.push_back(std::vector<uint>(selectThemes.value(2).toUInt()));
-            //qDebug() << themes.back();
         }
     }
 
@@ -50,11 +49,30 @@ bool pdd_db::load() {
             for(uint a = 0; a < vars_count; ++a) {
                 quest.add_answer(sq.value(a+5).toString());
             }
-            //quest.set_image_name(sq.value(10).toString());
             quest.set_theme_number(sq.value(11).toUInt());
             quest.set_number(sq.value(12).toUInt());
             questions.insert(std::make_pair(quest.get_id(), quest));
             questions_by_themes[quest.get_theme_number()-1][quest.get_number()-1] = quest.get_id();
+        }
+    }
+
+    { // Чтение таблицы quests_by_task_ab
+        QSqlQuery sq("SELECT * FROM quests_by_task_ab");
+        if(!sq.exec()) {
+            qDebug() << sq.lastError().text();
+            return false;
+        }
+
+        questions_by_tasks.resize(get_tasks_count()); // количество билетов (официальная версия ГИБДД)
+        for(std::vector<std::vector<uint> >::iterator q = questions_by_tasks.begin(); q != questions_by_tasks.end(); ++q) {
+            q->resize(get_questions_in_task_count()); // количество вопросов в билете (официальная версия ГИБДД)
+        }
+        while(sq.next()) {
+            uint task_number = sq.value(0).toUInt();
+            uint in_task_number = sq.value(1).toUInt();
+            uint theme_number = sq.value(2).toUInt();
+            uint in_theme_number = sq.value(3).toUInt();
+            questions_by_tasks[task_number-1][in_task_number-1] = questions_by_themes[theme_number-1][in_theme_number-1];
         }
     }
 
@@ -80,6 +98,14 @@ QString pdd_db::get_theme_name(const uint n) const {
 uint pdd_db::get_questions_count(const uint theme_n) const {
     assert(theme_n > 0);
     return questions_by_themes[theme_n-1].size();
+}
+
+uint pdd_db::get_tasks_count() const {
+    return 40;
+}
+
+uint pdd_db::get_questions_in_task_count() const {
+    return 20;
 }
 
 const question& pdd_db::get_question(const uint id) const {
@@ -112,6 +138,19 @@ question& pdd_db::get_question(const uint theme_n, const uint n)  {
     assert(n > 0);
     const uint id = questions_by_themes[theme_n-1][n-1];
     return get_question(id);
+}
+
+std::vector<uint> pdd_db::get_ids_of_block(const uint task_number, const uint start_number_in_task, const uint block_sz/* = 5*/) const {
+    assert(task_number <= questions_by_tasks.size());
+    assert(start_number_in_task + block_sz - 1 <= questions_by_tasks[task_number-1].size());
+
+    std::vector<uint> result;
+    const uint last_number_in_task = start_number_in_task + block_sz - 1;
+    for(uint n = start_number_in_task; n <= last_number_in_task; ++n) {
+        result.push_back(questions_by_tasks[task_number-1][n-1]);
+    }
+
+    return result;
 }
 
 void pdd_db::set_question(const question& q) {
