@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <question.h>
+#include <QSharedPointer>
 
 class QTableWidget;
 
@@ -13,7 +14,7 @@ class pdd_db;
 class question_form : public QWidget {
     Q_OBJECT
 public:
-    explicit question_form(pdd_db* db, const uint th_n, const uint n, QWidget *parent = 0);
+    explicit question_form(QSharedPointer<pdd_db> db, const uint th_n, const uint n, QWidget *parent = 0);
 signals:
     void question_saved();
 
@@ -22,7 +23,7 @@ private slots:
     void on_save();
 
 private:
-    pdd_db* doc;
+    QSharedPointer<pdd_db> doc;
     question quest;
     QTableWidget* table;
 };

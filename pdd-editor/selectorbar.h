@@ -2,6 +2,7 @@
 #define SELECTORBAR_H
 
 #include <QWidget>
+#include <QSharedPointer>
 
 class QComboBox;
 class QSpinBox;
@@ -13,7 +14,7 @@ class pdd_db;
 class SelectorBar : public QWidget {
     Q_OBJECT
 public:
-    explicit SelectorBar(pdd::pdd_db* db, QWidget *parent = 0);
+    explicit SelectorBar(QSharedPointer<pdd::pdd_db> db, QWidget *parent = 0);
 
 signals:
     void show_question(uint theme, uint number);
@@ -30,7 +31,7 @@ private slots:
 private:
     QComboBox* themeBox;
     QSpinBox* numberBox;
-    pdd::pdd_db* doc;
+    QSharedPointer<pdd::pdd_db> doc;
 };
 
 #endif // SELECTORBAR_H

@@ -12,7 +12,7 @@
 
 using namespace pdd;
 
-question_form::question_form(pdd_db *db, const uint th_n, const uint n, QWidget *parent)
+question_form::question_form(QSharedPointer<pdd_db> db, const uint th_n, const uint n, QWidget *parent)
     : QWidget(parent)
     , doc(db)
     , quest(doc->get_question(th_n, n)) {

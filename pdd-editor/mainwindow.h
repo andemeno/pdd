@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <pdd_db.h>
+#include <QSharedPointer>
 
 namespace Ui {
 class MainWindow;
@@ -10,8 +11,7 @@ class MainWindow;
 
 class SelectorBar;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 public:
@@ -22,7 +22,8 @@ public:
 private slots:
     void show_question(const uint theme, const uint n);
     void on_action_merge_triggered();
-    void on_rename_action_triggered();
+    void on_rename_action_triggered();   
+    void on_choose_bd_action_triggered();
 
 private:
 
@@ -34,7 +35,7 @@ private:
 
     Ui::MainWindow *ui;
     QString work_dir;
-    pdd::pdd_db doc;
+    QSharedPointer<pdd::pdd_db> doc;
     SelectorBar* selector;
 };
 

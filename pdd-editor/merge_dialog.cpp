@@ -3,23 +3,23 @@
 #include <pdd_db.h>
 #include <QtWidgets>
 
-merge_dialog::merge_dialog(const pdd::pdd_db &doc, QWidget *parent) :
+merge_dialog::merge_dialog(const QSharedPointer<pdd::pdd_db> doc, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::merge_dialog) {
     ui->setupUi(this);
 
-    ui->tableWidget->setRowCount(doc.get_themes_count());
+    ui->tableWidget->setRowCount(doc->get_themes_count());
 
     for(int r = 0; r < ui->tableWidget->rowCount(); ++r) {
         QCheckBox* check_box = new QCheckBox;
         themes.push_back(check_box);
 
         QSpinBox* spin_from = new QSpinBox;
-        spin_from->setRange(1, doc.get_questions_count(r+1));
+        spin_from->setRange(1, doc->get_questions_count(r+1));
         spin_from->setValue(spin_from->minimum());
 
         QSpinBox* spin_to = new QSpinBox;
-        spin_to->setRange(1, doc.get_questions_count(r+1));
+        spin_to->setRange(1, doc->get_questions_count(r+1));
         spin_to->setValue(spin_to->maximum());
 
         ui->tableWidget->setCellWidget(r, 0, check_box);

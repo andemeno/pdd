@@ -21,7 +21,7 @@
      <x>0</x>
      <y>0</y>
      <width>1200</width>
-     <height>26</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -31,7 +31,14 @@
     <addaction name="action_merge"/>
     <addaction name="rename_action"/>
    </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Настройки</string>
+    </property>
+    <addaction name="choose_bd_action"/>
+   </widget>
    <addaction name="menu"/>
+   <addaction name="menu_2"/>
   </widget>
   <action name="action_merge">
    <property name="text">
@@ -41,6 +48,11 @@
   <action name="rename_action">
    <property name="text">
     <string>Переименование...</string>
+   </property>
+  </action>
+  <action name="choose_bd_action">
+   <property name="text">
+    <string>Указать путь к БД...</string>
    </property>
   </action>
  </widget>

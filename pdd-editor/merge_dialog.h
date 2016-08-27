@@ -2,6 +2,7 @@
 #define MERGE_DIALOG_H
 
 #include <QDialog>
+#include <QSharedPointer>
 
 namespace pdd {
 class pdd_db;
@@ -16,7 +17,7 @@ class QCheckBox;
 class merge_dialog : public QDialog {
     Q_OBJECT
 public:
-    explicit merge_dialog(const pdd::pdd_db& doc, QWidget *parent = 0);
+    explicit merge_dialog(const QSharedPointer<pdd::pdd_db> doc, QWidget *parent = 0);
     ~merge_dialog();
 
     std::map<uint, std::pair<uint, uint> > get_data_to_merge();

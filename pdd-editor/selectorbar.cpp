@@ -8,7 +8,7 @@
 
 using namespace pdd;
 
-SelectorBar::SelectorBar(pdd_db *db, QWidget *parent)
+SelectorBar::SelectorBar(QSharedPointer<pdd_db> db, QWidget *parent)
     : QWidget(parent)
     , doc(db) {
 
