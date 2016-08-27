@@ -15,8 +15,12 @@
 #include "taskwidget.h"
 #include "trainingwidget.h"
 #include <stdexcept>
+#include <QMessageBox>
+#include <QAction>
 
 using namespace pdd;
+
+const QString version_info("Версия программы 1.0 от 27-08-16") ;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -70,6 +74,11 @@ MainWindow::MainWindow(QWidget *parent)
     //qDebug() << "Версия протокола " << Config::inst().protocolVersion;
     //qDebug() << "Extra off " << Config::inst().extraOff;
     //qDebug() << "use-common-db: " << int(Config::inst().useSqliteDatabase);
+
+    QAction* about_action = new QAction(QString("About"), this);
+    about_action->setShortcut(QKeySequence(Qt::Key_F1));
+    connect(about_action, SIGNAL(triggered(bool)), this, SLOT(about()));
+    addAction(about_action);
 
     // Загрузка вопросов
     if(!pdd::DataBox::inst().load())
@@ -257,4 +266,8 @@ void MainWindow::setTrainingWidget() {
     TrainingWidget* w = new TrainingWidget;
     setCentralWidget(w);
     state = state_view_results;
+}
+
+void MainWindow::about() {
+    QMessageBox::about(this, tr("О pdd-exam"), version_info);
 }

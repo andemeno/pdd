@@ -31,6 +31,7 @@ private slots:
     void onTaskStarted();
     void onTaskEnded();
     void onSecondElapsed();
+    void about();
 
 private:
 
