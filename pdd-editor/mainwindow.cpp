@@ -96,13 +96,15 @@ void MainWindow::rename_images_2(const QString &path_to_images) {
             int theme_n = json_quest["t"].toString().toInt();
             int quest_n = json_quest["n"].toString().toInt();
 
-            QString old_name = QString("%1%2-%3.jpg").arg(path_to_images).arg(task).arg(n);
-            QString new_name = QString("%1%2-%3.jpg").arg(path_to_images).arg(theme_n).arg(quest_n);
+            QString old_name = QString("%1/%2-%3.jpeg").arg(path_to_images).arg(task).arg(n);
+            QString new_name = QString("%1/%2-%3.jpg").arg(path_to_images).arg(theme_n).arg(quest_n);
             QFile image_file(old_name);
             if(!image_file.open(QIODevice::ReadWrite)) {
                 qDebug() << "error on open" << old_name;
                 continue;
             }
+
+            //if(image_file.size() == 0) continue;
             if(!image_file.rename(new_name)) {
                 qDebug() << "error on rename" << old_name << "to" << new_name;
                 continue;
@@ -216,6 +218,7 @@ void MainWindow::on_rename_action_triggered() {
         QStringList paths = dialog.selectedFiles();
         if(!paths.isEmpty()) {
             rename_images_2(paths[0]);
+            qDebug() << "Rename images complited.";
         }
     }
 }

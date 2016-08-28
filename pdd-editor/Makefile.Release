@@ -241,6 +241,7 @@ release/moc_mainwindow.cpp: C:/Qt/5.5/mingw492_32/include/QtWidgets/QMainWindow 
 		C:/Qt/5.5/mingw492_32/include/QtCore/QStringList \
 		../pdd_db/question.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QString \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		mainwindow.h
 	'C:\Qt\5.5\mingw492_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.5/mingw492_32/mkspecs/win32-g++ -ID:/gitrepo/pdd/pdd-editor -ID:/gitrepo/pdd/pdd_db -IC:/Qt/5.5/mingw492_32/include -IC:/Qt/5.5/mingw492_32/include/QtWidgets -IC:/Qt/5.5/mingw492_32/include/QtGui -IC:/Qt/5.5/mingw492_32/include/QtANGLE -IC:/Qt/5.5/mingw492_32/include/QtSql -IC:/Qt/5.5/mingw492_32/include/QtCore mainwindow.h -o release/moc_mainwindow.cpp
 
@@ -349,6 +350,7 @@ release/moc_question_form.cpp: C:/Qt/5.5/mingw492_32/include/QtWidgets/QWidget \
 		../pdd_db/question.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QString \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QStringList \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		question_form.h
 	'C:\Qt\5.5\mingw492_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.5/mingw492_32/mkspecs/win32-g++ -ID:/gitrepo/pdd/pdd-editor -ID:/gitrepo/pdd/pdd_db -IC:/Qt/5.5/mingw492_32/include -IC:/Qt/5.5/mingw492_32/include/QtWidgets -IC:/Qt/5.5/mingw492_32/include/QtGui -IC:/Qt/5.5/mingw492_32/include/QtANGLE -IC:/Qt/5.5/mingw492_32/include/QtSql -IC:/Qt/5.5/mingw492_32/include/QtCore question_form.h -o release/moc_question_form.cpp
 
@@ -454,6 +456,7 @@ release/moc_selectorbar.cpp: C:/Qt/5.5/mingw492_32/include/QtWidgets/QWidget \
 		C:/Qt/5.5/mingw492_32/include/QtCore/qfiledevice.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qvector2d.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qtouchdevice.h \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		selectorbar.h
 	'C:\Qt\5.5\mingw492_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.5/mingw492_32/mkspecs/win32-g++ -ID:/gitrepo/pdd/pdd-editor -ID:/gitrepo/pdd/pdd_db -IC:/Qt/5.5/mingw492_32/include -IC:/Qt/5.5/mingw492_32/include/QtWidgets -IC:/Qt/5.5/mingw492_32/include/QtGui -IC:/Qt/5.5/mingw492_32/include/QtANGLE -IC:/Qt/5.5/mingw492_32/include/QtSql -IC:/Qt/5.5/mingw492_32/include/QtCore selectorbar.h -o release/moc_selectorbar.cpp
 
@@ -666,6 +669,7 @@ release/moc_merge_dialog.cpp: C:/Qt/5.5/mingw492_32/include/QtWidgets/QDialog \
 		C:/Qt/5.5/mingw492_32/include/QtCore/qfiledevice.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qvector2d.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qtouchdevice.h \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		merge_dialog.h
 	'C:\Qt\5.5\mingw492_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.5/mingw492_32/mkspecs/win32-g++ -ID:/gitrepo/pdd/pdd-editor -ID:/gitrepo/pdd/pdd_db -IC:/Qt/5.5/mingw492_32/include -IC:/Qt/5.5/mingw492_32/include/QtWidgets -IC:/Qt/5.5/mingw492_32/include/QtGui -IC:/Qt/5.5/mingw492_32/include/QtANGLE -IC:/Qt/5.5/mingw492_32/include/QtSql -IC:/Qt/5.5/mingw492_32/include/QtCore merge_dialog.h -o release/moc_merge_dialog.cpp
 
@@ -802,6 +806,7 @@ release/main.o: main.cpp mainwindow.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QStringList \
 		../pdd_db/question.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QString \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/QApplication \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/qapplication.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/qcoreapplication.h \
@@ -921,6 +926,7 @@ release/mainwindow.o: mainwindow.cpp mainwindow.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QStringList \
 		../pdd_db/question.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QString \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		ui_mainwindow.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QVariant \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/QAction \
@@ -1205,6 +1211,7 @@ release/question_form.o: question_form.cpp question_form.h \
 		../pdd_db/question.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QString \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QStringList \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/QTableWidget \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/qtablewidget.h \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/qtableview.h \
@@ -1349,6 +1356,7 @@ release/selectorbar.o: selectorbar.cpp selectorbar.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/qfiledevice.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qvector2d.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qtouchdevice.h \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/QComboBox \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/qcombobox.h \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/qabstractitemdelegate.h \
@@ -1612,6 +1620,7 @@ release/merge_dialog.o: merge_dialog.cpp merge_dialog.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/qfiledevice.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qvector2d.h \
 		C:/Qt/5.5/mingw492_32/include/QtGui/qtouchdevice.h \
+		C:/Qt/5.5/mingw492_32/include/QtCore/QSharedPointer \
 		ui_merge_dialog.h \
 		C:/Qt/5.5/mingw492_32/include/QtCore/QVariant \
 		C:/Qt/5.5/mingw492_32/include/QtWidgets/QAction \
