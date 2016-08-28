@@ -16,7 +16,7 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
-    , work_dir("..\\work-resources")
+    , work_dir("..\\pdd_resources")
     , doc(new pdd::pdd_db(work_dir + "\\pdd.db")) {
 
     ui->setupUi(this);
