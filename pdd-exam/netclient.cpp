@@ -67,9 +67,17 @@ void NetClient::sendStartTaskPacket() {
         out.writeRawData( (const char*)&b, 1);
 
     } else if(Config::inst().protocolVersion == 1) {
-        QByteArray msg(2, 0);
-        msg[0] = 2;
+        //QByteArray msg(2, 0);
+        //msg[0] = 2;
+        //msg[1] = 2;
+        //out.writeRawData(msg.constData(), msg.size());
+        std::vector<uint> qids = DataBox::inst().getTaskQuestions();
+        QByteArray msg(2+qids.size(), 0);
+        msg[0] = msg.size();
         msg[1] = 2;
+        for(uint n = 0; n < qids.size(); ++n) {
+            msg[n+2] = qids[n];
+        }
         out.writeRawData(msg.constData(), msg.size());
     }
 }
