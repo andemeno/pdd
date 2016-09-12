@@ -21,9 +21,6 @@ DataBox::DataBox(QObject *parent)
     , elapsedTaskTime(0)
     , totalElapsedTaskTime(0) {
 
-    //if(!load())
-    //    throw std::runtime_error( "Error on load pdd_resources." );
-
     connect( &timer, SIGNAL(timeout()), this, SLOT(onTimeoutTask()) );
     connect( this, SIGNAL(extraTask(uint)), this, SLOT(initExtraTask()) );
 }
@@ -54,29 +51,6 @@ bool DataBox::Category::load_from_sql(const std::string& dbName) {
         }
     }
 
-/*    groups.clear();
-    group g;
-    theme_block block;
-    const uint themes_count = doc->get_themes_count();
-    for(uint th = 1; th <= themes_count; ++th) {
-        const uint quest_count = doc->get_questions_count(th);
-
-        for(uint n = 1; n <= quest_count; ++n) {
-            block.push_back(doc->get_question(th, n).get_id());
-            if(block.size() == questionsInThemeBlock) {
-                g.push_back(block);
-                if(g.size() == themeBlocksCount) {
-                    groups.push_back(g);
-                    g.clear();
-                }
-                block.clear();
-            }
-        }
-    }
-
-    if(groups.size() != groupsCount)
-        loaded = false;
-*/
     return loaded;
 }
 
@@ -97,7 +71,10 @@ std::pair<uint, uint> DataBox::get_block_group_pair(const uint qid) const {
         }
 
     }
-    return std::pair<uint, uint>(0, 0);
+
+    QString err_msg = QString("DataBox::get_block_pair() for unexpected question id = %1").arg(qid);
+    throw std::runtime_error(err_msg.toStdString());
+    return std::pair<uint, uint>(0, 0); // nether return
 }
 
 
@@ -180,11 +157,12 @@ void DataBox::initExtraTask() {
 
     for(std::map<uint,uint>::iterator e = errors.begin(); e != errors.end(); ++e) {
 
-        uint n = e->first;
-        while(n == e->first)
-            n = std::rand() % category->themeBlocksCount;
+        uint tb_n = e->first;
+        while(tb_n == e->first)
+            tb_n = (std::rand() % category->themeBlocksCount) + 1;
+        const uint g_n = e->second;
 
-        const theme_block& block = category->groups[e->second][n];
+        const theme_block& block = category->groups[g_n-1][tb_n-1];
         for(theme_block::const_iterator i = block.begin(); i != block.end(); ++i) {
             task.push_back(task_question(*i));
         }

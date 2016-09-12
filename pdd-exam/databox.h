@@ -147,7 +147,7 @@ public:
     const question& getQuestion(const uint id) const;
 
     /**
-     * Вопрос с заданным номером темы и номеро вопроса в теме
+     * Вопрос с заданным номером темы и номером вопроса в теме
      * @param id идентификаор вопроса
      */
     const question& getQuestion(const uint th, const uint n) const;
