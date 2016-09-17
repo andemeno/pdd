@@ -20,7 +20,7 @@
 
 using namespace pdd;
 
-const QString version_info("Версия программы 1.2 от 12-09-16");
+const QString version_info("Версия программы 1.3 от 17-09-16");
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)

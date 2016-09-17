@@ -91,12 +91,13 @@ QStringList pdd_db::get_theme_names() const {
 
 QString pdd_db::get_theme_name(const uint n) const {
     assert(n > 0);
-    assert(int(n) < themes.size());
+    assert(int(n) <= themes.size());
     return themes[n-1];
 }
 
 uint pdd_db::get_questions_count(const uint theme_n) const {
     assert(theme_n > 0);
+    assert(theme_n <= questions_by_themes.size());
     return questions_by_themes[theme_n-1].size();
 }
 
