@@ -67,17 +67,24 @@ void NetClient::sendStartTaskPacket() {
         out.writeRawData( (const char*)&b, 1);
 
     } else if(Config::inst().protocolVersion == 1) {
-        /*QByteArray msg(2, 0);
-        msg[0] = 2;
-        msg[1] = 2;
-        out.writeRawData(msg.constData(), msg.size());*/
-        // можно послать в этом пакете в поле данных идентификаторы вопросов попавших в задание
+        // Посылаем в этом пакете в поле данных идентификаторы вопросов попавших в задание
+//        const std::vector<uint> qids = DataBox::inst().getTaskQuestions();
+//        QByteArray msg(2+qids.size(), 0);
+//        msg[0] = msg.size();
+//        msg[1] = 2;
+//        for(int n = 2; n < msg.size(); ++n) {
+//            msg[n] = qids[n-2];
+//        }
+//        out.writeRawData(msg.constData(), msg.size());
+
         const std::vector<uint> qids = DataBox::inst().getTaskQuestions();
-        QByteArray msg(2+qids.size(), 0);
+        QByteArray msg(2+2*qids.size(), 0);
         msg[0] = msg.size();
         msg[1] = 2;
-        for(int n = 2; n < msg.size(); ++n) {
-            msg[n] = qids[n-2];
+        char* ptrMsg = msg.data();
+        for(int n = 2; n < msg.size(); n+=2) {
+            quint16* ptr = (quint16*)(&ptrMsg[n]);
+            *ptr = (quint16)(qids[n-2]);
         }
         out.writeRawData(msg.constData(), msg.size());
     }
@@ -106,6 +113,21 @@ void NetClient::sendAnswerPacket(const uint qn, const uint qid, const uint an, c
         *ptr = (quint16)qid;
         msg[5] = an;
         msg[6] = ran;
+        out.writeRawData(msg.constData(), msg.size());
+    }
+}
+
+void NetClient::sendAnswerPacketOnTest(const uint qid, const uint an, const uint ran) {
+    QDataStream out(socket);
+    if(Config::inst().protocolVersion == 1) {
+        QByteArray msg(6, 0);
+        msg[0] = 6;
+        msg[1] = 6;
+        char* ptrMsg = msg.data();
+        quint16* ptr = (quint16*)(&ptrMsg[2]);
+        *ptr = (quint16)qid;
+        msg[4] = an;
+        msg[5] = ran;
         out.writeRawData(msg.constData(), msg.size());
     }
 }

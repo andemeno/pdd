@@ -20,7 +20,7 @@
 
 using namespace pdd;
 
-const QString version_info("Версия программы 1.3 от 17-09-16");
+const QString version_info("Версия программы 1.4 от 08-03-17");
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -162,12 +162,22 @@ void MainWindow::onRegisterTask(QString name, uint qcount, bool category_ab) {
     category = category_ab;
     themeNum = 0;
 
-    QString headerText("экзамен на право управления транспортным средством. категория в/у: ");
-    headerText += category_ab ? "В" : "СD";
-    headerText += "\n";
-    headerText += name;
-    headerWidget->setMainText(headerText);
-    setPromptWidget();
+    if(questionsCount > 0) {
+        QString headerText("экзамен на право управления транспортным средством. категория в/у: ");
+        headerText += category_ab ? "В" : "СD";
+        headerText += "\n";
+        headerText += name;
+        headerWidget->setMainText(headerText);
+        setPromptWidget();
+
+    } else {
+        QString headerText("тестирование по темам. категория в/у: ");
+        headerText += category_ab ? "В" : "СD";
+        headerText += "\n";
+        headerText += name;
+        headerWidget->setMainText(headerText);
+        setSelectorWidget();
+    }
 }
 
 void MainWindow::onSelectTask(bool category_ab, uint qcount) {
@@ -226,15 +236,23 @@ void MainWindow::setSelectorWidget() {
         connect(w, SIGNAL(startTraining(bool,uint)), this, SLOT(onSelectTrainig(bool,uint)));
         setCentralWidget(w);
     } else {
-        QLabel* w = new QLabel(QString("%1").arg(Config::inst().armNumber));
-        w->setAlignment(Qt::AlignCenter);
-        QFont font = w->font();
-        font.setPointSize(200);
-        w->setFont( font );
-        QPalette pal = w->palette();
-        pal.setColor(QPalette::WindowText, QColor("#0055ee"));
-        w->setPalette(pal);
-        setCentralWidget(w);
+
+        if(questionsCount > 0) {
+            QLabel* w = new QLabel(QString("%1").arg(Config::inst().armNumber));
+            w->setAlignment(Qt::AlignCenter);
+            QFont font = w->font();
+            font.setPointSize(200);
+            w->setFont( font );
+            QPalette pal = w->palette();
+            pal.setColor(QPalette::WindowText, QColor("#0055ee"));
+            w->setPalette(pal);
+            setCentralWidget(w);
+
+        } else {
+            SelectorWidget* w = new SelectorWidget(true);
+            connect(w, SIGNAL(startTraining(bool,uint)), this, SLOT(onSelectTrainig(bool,uint)));
+            setCentralWidget(w);
+        }
     }
     state = state_wait_task;
 }
@@ -265,7 +283,8 @@ void MainWindow::setTrainingWidget() {
     DataBox::inst().initByTheme(themeNum);
     TrainingWidget* w = new TrainingWidget;
     setCentralWidget(w);
-    state = state_view_results;
+    if(Config::inst().localMode) state = state_view_results;
+    else state = state_execute_task;
 }
 
 void MainWindow::about() {

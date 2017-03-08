@@ -20,7 +20,8 @@ TrainingQuestionWidget::TrainingQuestionWidget(const uint n, QWidget *parent)
     connect(confirmButton, SIGNAL(clicked(bool)), this, SLOT(onConfirmButton()));
     connect(prevButton, SIGNAL(clicked(bool)), this, SLOT(onPrevButton()));
     connect(nextButton, SIGNAL(clicked(bool)), this, SLOT(onNextButton()));
-    connect(helpButton, SIGNAL(clicked(bool)), this, SLOT(onHelpButton()));
+    if(Config::inst().localMode)
+        connect(helpButton, SIGNAL(clicked(bool)), this, SLOT(onHelpButton()));
     connect(enumButton, SIGNAL(clicked(bool)), this, SIGNAL(showEnum()));
 }
 
@@ -152,9 +153,10 @@ void TrainingQuestionWidget::makeGUI() {
     // Кнопки навигации
     QHBoxLayout* footer = new QHBoxLayout;
     footer->addStretch( 1 );
-    // Кнопка вызова пояснения
-    helpButton = new QPushButton("ПОМОЩЬ");
-    footer->addWidget(helpButton, 0, Qt::AlignRight);
+    if(Config::inst().localMode) {// Кнопка вызова пояснения
+        helpButton = new QPushButton("ПОМОЩЬ");
+        footer->addWidget(helpButton, 0, Qt::AlignRight);
+    }
     // Кнопка перехода к предыдущему вопросу
     prevButton = new QPushButton("НАЗАД");
     footer->addWidget(prevButton, 0, Qt::AlignRight);

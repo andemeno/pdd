@@ -24,15 +24,21 @@ public slots:
     /** Отправка пакета с командой НАЧАТЬ ТЕСТ */
     void sendStartTaskPacket();
 
-    /** Отправка пакета с ответом пользователя на очередной вопрос */
+    /** Отправка пакета с ответом пользователя на очередной вопрос экзамена */
     void sendAnswerPacket(const uint qn, const uint qid, const uint an, const uint ran);
+
+    /** Отправка пакета с ответом пользователя на очередной вопрос теста */
+    void sendAnswerPacketOnTest(const uint qid, const uint an, const uint ran);
 
     void onExtraTask(uint count);
 
-    /** Отправка пакета закончен/не закончен тест. */
+    /** Отправка пакета закончен/не закончен тест. "Родной" протокол обмена. */
     void sendEndTaskPackets();
 
+    /** Отправка пакета экзамен сдан. */
     void onSuccessTask();
+
+    /** Отправка пакета экзамен не сдан. */
     void onFailTask();
 
 private slots:

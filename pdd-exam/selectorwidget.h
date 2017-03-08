@@ -12,7 +12,7 @@ namespace pdd {
 class SelectorWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit SelectorWidget(QWidget *parent = 0);
+    explicit SelectorWidget(const bool only_themes_flag = false, QWidget *parent = 0);
     uint getThemeNumber() const;
 
 signals:
@@ -27,6 +27,8 @@ private slots:
 private:
 
     void makeGUI();
+
+    bool only_themes = false;
 
     uint choise;
     QComboBox* abThemesCombo;

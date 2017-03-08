@@ -42,6 +42,7 @@ void TrainingWidget::makeGUI() {
         connect( w, SIGNAL(showEnum()), this, SLOT(showEnum()) );
         connect( w, SIGNAL(answerRight(uint)), enumWidget, SLOT(onAnswerRight(uint)) );
         connect( w, SIGNAL(answerWrong(uint)), enumWidget, SLOT(onAnswerWrong(uint)) );
+        connect(this, SIGNAL(show_help()), w, w, SLOT(onHelpButton()));
         stacked->addWidget(w);
     }
     stacked->addWidget(enumWidget);

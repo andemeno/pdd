@@ -10,10 +10,11 @@
 #include <QApplication>
 #include <QMessageBox>
 #include "databox.h"
+#include "programconfig.h"
 
 using namespace pdd;
 
-SelectorWidget::SelectorWidget(QWidget *parent)
+SelectorWidget::SelectorWidget(const bool only_themes_flag, QWidget *parent)
     : QWidget(parent)
     , choise( 0 ) {
 
@@ -72,13 +73,15 @@ void SelectorWidget::makeGUI() {
     }
     mainLayout->addWidget( abThemesCombo );
 
-    btn = new QRadioButton( "Тест на 20 вопросов (АВ). Время выполнения 20 минут." );
-    selector->addButton( btn, 2 );
-    mainLayout->addWidget( btn );
+    if(!only_themes) {
+        btn = new QRadioButton( "Тест на 20 вопросов (АВ). Время выполнения 20 минут." );
+        selector->addButton( btn, 2 );
+        mainLayout->addWidget( btn );
 
-    btn = new QRadioButton( "Тест на 40 вопросов (АВ). Время выполнения 30 минут." );
-    selector->addButton( btn, 3 );
-    mainLayout->addWidget( btn );
+        btn = new QRadioButton( "Тест на 40 вопросов (АВ). Время выполнения 30 минут." );
+        selector->addButton( btn, 3 );
+        mainLayout->addWidget( btn );
+    }
 
 //    mainLayout->addSpacing( 30 );
 
@@ -103,11 +106,11 @@ void SelectorWidget::makeGUI() {
 
     mainLayout->addSpacing( 50 );
 
-    exitButton = new QPushButton( tr("ВЫХОД") );
+    if(Config::inst().localMode) exitButton = new QPushButton( tr("ВЫХОД") );
     startButton = new QPushButton( tr("НАЧАТЬ") );
     QHBoxLayout* navLayout = new QHBoxLayout;
     navLayout->addStretch( 1 );
-    navLayout->addWidget( exitButton );
+    if(Config::inst().localMode) navLayout->addWidget( exitButton );
     navLayout->addWidget( startButton );
     navLayout->addStretch( 1 );
     mainLayout->addLayout( navLayout );

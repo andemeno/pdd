@@ -13,6 +13,8 @@ public:
     explicit TrainingWidget(QWidget *parent = 0);
 
 signals:
+    void show_help();
+
 public slots:
     void onPrevQuestion(const uint n);
     void onNextQuestion(uint n);
