@@ -41,10 +41,10 @@ private:
     void setTrainingWidget();
 
     enum {
-        state_wait_task,
-        state_wait_start,
-        state_execute_task,
-        state_view_results
+        state_wait_task, // ждем задание от сервера
+        state_wait_start, // получил задание но не начал его выполнять
+        state_execute_task, // отвечает
+        state_view_results // смотрит результаты
     };
 
     int state;
@@ -54,6 +54,7 @@ private:
     QTimer timer;
     NetClient* client;
     HeaderWidget* headerWidget;
+    QString user_name;
 };
 
 }

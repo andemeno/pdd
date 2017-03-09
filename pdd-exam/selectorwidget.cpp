@@ -16,13 +16,19 @@ using namespace pdd;
 
 SelectorWidget::SelectorWidget(const bool only_themes_flag, QWidget *parent)
     : QWidget(parent)
+    , only_themes(only_themes_flag)
     , choise( 0 ) {
 
     makeGUI();
 
     connect( selector, SIGNAL(buttonClicked(int)), this, SLOT(onSelect(int)) );
     connect( startButton, SIGNAL(clicked(bool)), this, SLOT(onStartClick()) );
-    connect( exitButton, SIGNAL(clicked(bool)), this, SLOT(onStopClick()) );
+    if(Config::inst().localMode)
+        connect( exitButton, SIGNAL(clicked(bool)), this, SLOT(onStopClick()) );
+
+    if(only_themes) {
+        selector->button(1)->click();
+    }
 }
 
 

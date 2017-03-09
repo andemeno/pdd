@@ -28,7 +28,7 @@ public slots:
     void sendAnswerPacket(const uint qn, const uint qid, const uint an, const uint ran);
 
     /** Отправка пакета с ответом пользователя на очередной вопрос теста */
-    void sendAnswerPacketOnTest(const uint qid, const uint an, const uint ran);
+    //void sendAnswerPacketOnTest(const uint qid, const uint an, const uint ran);
 
     void onExtraTask(uint count);
 

@@ -329,6 +329,21 @@ void DataBox::setAnswer(const uint number, const uint answer) {
     }
 }
 
+void DataBox::setAnswerOnThemes(const uint number, const uint answer) {
+    if(number >= task.size())
+        throw std::runtime_error(QString("Incorrect question index=%1").arg(number).toStdString());
+
+    task[number].answer = answer;
+    ++totalAnswers;
+
+    uint right_answer = ab.doc->get_question(task[number].qid).get_answer();
+    // Номер вопроса в сигнале задаем = 0, таким образом в оработчике отличим его от "экзаменационного" сигнала
+    emit questionAnswered(0, task[number].qid, task[number].answer, right_answer);
+
+    if(task.size() == totalAnswers) // вопросы закончились, критериев оценки нет, поэтому всегда успех
+        emit successTask();
+}
+
 
 void DataBox::onTimeoutTask() {
 

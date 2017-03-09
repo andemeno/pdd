@@ -104,33 +104,46 @@ void NetClient::sendAnswerPacket(const uint qn, const uint qid, const uint an, c
         out.writeRawData( (char*)&rightAnswerNumber, sizeof(rightAnswerNumber));
 
     } else if(Config::inst().protocolVersion == 1) {
-        QByteArray msg(7, 0);
-        msg[0] = 7;
-        msg[1] = 3;
-        msg[2] = qn;
-        char* ptrMsg = msg.data();
-        quint16* ptr = (quint16*)(&ptrMsg[3]);
-        *ptr = (quint16)qid;
-        msg[5] = an;
-        msg[6] = ran;
-        out.writeRawData(msg.constData(), msg.size());
+        if(qn > 0) { // это экзамен
+            QByteArray msg(7, 0);
+            msg[0] = 7;
+            msg[1] = 3;
+            msg[2] = qn;
+            char* ptrMsg = msg.data();
+            quint16* ptr = (quint16*)(&ptrMsg[3]);
+            *ptr = (quint16)qid;
+            msg[5] = an;
+            msg[6] = ran;
+            out.writeRawData(msg.constData(), msg.size());
+
+        } else { // это тестирование по темам
+            QByteArray msg(6, 0);
+            msg[0] = 6;
+            msg[1] = 6;
+            char* ptrMsg = msg.data();
+            quint16* ptr = (quint16*)(&ptrMsg[2]);
+            *ptr = (quint16)qid;
+            msg[4] = an;
+            msg[5] = ran;
+            out.writeRawData(msg.constData(), msg.size());
+        }
     }
 }
 
-void NetClient::sendAnswerPacketOnTest(const uint qid, const uint an, const uint ran) {
-    QDataStream out(socket);
-    if(Config::inst().protocolVersion == 1) {
-        QByteArray msg(6, 0);
-        msg[0] = 6;
-        msg[1] = 6;
-        char* ptrMsg = msg.data();
-        quint16* ptr = (quint16*)(&ptrMsg[2]);
-        *ptr = (quint16)qid;
-        msg[4] = an;
-        msg[5] = ran;
-        out.writeRawData(msg.constData(), msg.size());
-    }
-}
+//void NetClient::sendAnswerPacketOnTest(const uint qid, const uint an, const uint ran) {
+//    QDataStream out(socket);
+//    if(Config::inst().protocolVersion == 1) {
+//        QByteArray msg(6, 0);
+//        msg[0] = 6;
+//        msg[1] = 6;
+//        char* ptrMsg = msg.data();
+//        quint16* ptr = (quint16*)(&ptrMsg[2]);
+//        *ptr = (quint16)qid;
+//        msg[4] = an;
+//        msg[5] = ran;
+//        out.writeRawData(msg.constData(), msg.size());
+//    }
+//}
 
 
 void NetClient::onExtraTask(uint count) {

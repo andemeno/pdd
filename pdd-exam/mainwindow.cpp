@@ -146,21 +146,24 @@ void MainWindow::mouseDoubleClickEvent(QMouseEvent *) {
 
 void MainWindow::onServerConnected() {
     headerWidget->setMainText("связь с сервером установлена, ожидайте...");
-    setSelectorWidget();
     state = state_wait_task;
+    setSelectorWidget();
 }
 
 void MainWindow::onServerDisconnected() {
     timer.stop();
     headerWidget->setMainText("нет связи с сервером, ожидайте...");
-    setSelectorWidget();
     state = state_wait_task;
+    setSelectorWidget();
 }
 
 void MainWindow::onRegisterTask(QString name, uint qcount, bool category_ab) {
     questionsCount = qcount;
     category = category_ab;
     themeNum = 0;
+    user_name = name;
+
+    //questionsCount = 0; // принудительнпя отладка теста оп темам
 
     if(questionsCount > 0) {
         QString headerText("экзамен на право управления транспортным средством. категория в/у: ");
@@ -176,6 +179,8 @@ void MainWindow::onRegisterTask(QString name, uint qcount, bool category_ab) {
         headerText += "\n";
         headerText += name;
         headerWidget->setMainText(headerText);
+
+        state = state_wait_start;
         setSelectorWidget();
     }
 }
@@ -196,16 +201,27 @@ void MainWindow::onSelectTrainig(bool category_ab, uint themeNumber) {
     category = category_ab;
     questionsCount = 0;
 
-    QString headerText =
-      QString("ознакомление с вопросами по теме\n%1").
-        arg(DataBox::inst().getTheme(themeNumber));
-    headerWidget->setMainText(headerText);
+    if(Config::inst().localMode) {
+        QString headerText =
+          QString("ознакомление с вопросами по теме\n%1").
+            arg(DataBox::inst().getTheme(themeNumber));
+        headerWidget->setMainText(headerText);
+
+    } else {
+        QString headerText("тестирование по теме ");
+        headerText += QString("%1. ").arg(themeNumber);
+        headerText += category ? "категория в/у: В" : "категория в/у: СD";
+        headerText += "\n";
+        headerText += user_name;
+        headerWidget->setMainText(headerText);
+    }
     setTrainingWidget();
 }
 
 void MainWindow::onStopTaskByServer() {
     timer.stop();
     headerWidget->setMainText("связь с сервером установлена, ожидайте...");
+    state = state_wait_task;
     setSelectorWidget();
 }
 
@@ -216,9 +232,11 @@ void MainWindow::onTaskStarted() {
 }
 
 void MainWindow::onTaskEnded() {
-    timer.stop();
-    QTime t = DataBox::inst().getTaskElapsedTime();
-    headerWidget->setTimerText(QString("Затраченное время\n%1").arg( t.toString("mm:ss")));
+    if(questionsCount > 0) {
+        timer.stop();
+        QTime t = DataBox::inst().getTaskElapsedTime();
+        headerWidget->setTimerText(QString("Затраченное время\n%1").arg( t.toString("mm:ss")));
+    }
     state = state_view_results;
 }
 
@@ -237,7 +255,7 @@ void MainWindow::setSelectorWidget() {
         setCentralWidget(w);
     } else {
 
-        if(questionsCount > 0) {
+        if(state == state_wait_task) {
             QLabel* w = new QLabel(QString("%1").arg(Config::inst().armNumber));
             w->setAlignment(Qt::AlignCenter);
             QFont font = w->font();
@@ -248,13 +266,12 @@ void MainWindow::setSelectorWidget() {
             w->setPalette(pal);
             setCentralWidget(w);
 
-        } else {
+        } else if(state == state_wait_start && questionsCount == 0) {
             SelectorWidget* w = new SelectorWidget(true);
             connect(w, SIGNAL(startTraining(bool,uint)), this, SLOT(onSelectTrainig(bool,uint)));
             setCentralWidget(w);
         }
     }
-    state = state_wait_task;
 }
 
 void MainWindow::setPromptWidget() {

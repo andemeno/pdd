@@ -183,7 +183,7 @@ public:
     QTime getTaskRemainingTime();
 
     /** Время затраченное на экзамен */
-    QTime getTaskElapsedTime() const;
+    QTime getTaskElapsedTime() const;    
 
     /** Экземпляр объекта */
     static DataBox& inst();
@@ -200,6 +200,14 @@ public slots:
      * @param answer номер ответа экзаменуемого.
      */
     void setAnswer( const uint number, const uint answer );
+
+    /**
+     * Регистрация ответа на вопрос при тестировании по темам в онлайн режиме
+     * Генерирует сигнал questionAnswered
+     * @param number номер вопроса в теме.
+     * @param answer номер ответа экзаменуемого.
+     */
+    void setAnswerOnThemes(const uint number, const uint answer);
 
     /**
      * Действия, выполняемые по истеченю времени, отведенного на билет или доп.блок вопросов.

@@ -36,6 +36,8 @@ void TrainingQuestionWidget::onSelectAnswer(const uint n) {
 
 
 void TrainingQuestionWidget::onConfirmButton() {
+    DataBox::inst().setAnswerOnThemes(number, choise);
+
     // добавляем к комментарию сообщение с номером ответа экзаменуемого
     QString comment = helpLabel->text();
     comment.append( QString(". Ваш ответ - %1.").arg(choise) );
@@ -52,6 +54,7 @@ void TrainingQuestionWidget::onConfirmButton() {
         pal.setColor( QPalette::Window, QColor("green") );
         pal.setColor( QPalette::WindowText, QColor("white") );
         resultLabel->setText( "ВЫ ДАЛИ ПРАВИЛЬНЫЙ ОТВЕТ" );
+        helpLabel->show();
         emit answerRight(number);
 
     } else {
