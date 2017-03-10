@@ -163,7 +163,7 @@ void MainWindow::onRegisterTask(QString name, uint qcount, bool category_ab) {
     themeNum = 0;
     user_name = name;
 
-    //questionsCount = 0; // принудительнпя отладка теста оп темам
+    questionsCount = 0; // принудительнпя отладка теста оп темам
 
     if(questionsCount > 0) {
         QString headerText("экзамен на право управления транспортным средством. категория в/у: ");
