@@ -10,18 +10,18 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = pdd-exam
 TEMPLATE = app
-CONFIG += c++11
+CONFIG += c++11 debug_and_release build_all
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../build-pdd_db/release/ -lpdd_db
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../build-pdd_db/debug/ -lpdd_db
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../pdd_db/release/ -lpdd_db
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../pdd_db/debug/ -lpdd_db
 
 INCLUDEPATH += $$PWD/../pdd_db
 DEPENDPATH += $$PWD/../pdd_db
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../build-pdd_db/release/libpdd_db.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../build-pdd_db/debug/libpdd_db.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../build-pdd_db/release/pdd_db.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../build-pdd_db/debug/pdd_db.lib
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../pdd_db/release/libpdd_db.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../pdd_db/debug/libpdd_db.a
+#else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$PWD/../pdd_db/release/pdd_db.lib
+#else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$PWD/../pdd_db/debug/pdd_db.lib
 
 
 SOURCES += main.cpp\

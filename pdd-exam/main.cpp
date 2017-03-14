@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     try {
         QApplication a(argc, argv);
         a.setApplicationName("pdd-exam");
-        a.setApplicationVersion("1.0");
+        a.setApplicationVersion("1.4");
         a.setApplicationDisplayName("ПДД клиент");
         pdd::MainWindow w;
         w.show();

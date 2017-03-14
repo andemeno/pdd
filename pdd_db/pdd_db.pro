@@ -9,6 +9,7 @@ QT += sql
 
 TARGET = pdd_db
 TEMPLATE = lib
+CONFIG += shared debug_and_release build_all
 
 SOURCES += pdd_db.cpp \
             question.cpp
