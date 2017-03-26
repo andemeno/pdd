@@ -20,8 +20,7 @@ TrainingQuestionWidget::TrainingQuestionWidget(const uint n, QWidget *parent)
     connect(confirmButton, SIGNAL(clicked(bool)), this, SLOT(onConfirmButton()));
     connect(prevButton, SIGNAL(clicked(bool)), this, SLOT(onPrevButton()));
     connect(nextButton, SIGNAL(clicked(bool)), this, SLOT(onNextButton()));
-    if(Config::inst().localMode)
-        connect(helpButton, SIGNAL(clicked(bool)), this, SLOT(onHelpButton()));
+    connect(helpButton, SIGNAL(clicked(bool)), this, SLOT(onHelpButton()));
     connect(enumButton, SIGNAL(clicked(bool)), this, SIGNAL(showEnum()));
 }
 
@@ -36,7 +35,6 @@ void TrainingQuestionWidget::onSelectAnswer(const uint n) {
 
 
 void TrainingQuestionWidget::onConfirmButton() {
-    DataBox::inst().setAnswerOnThemes(number, choise);
 
     // добавляем к комментарию сообщение с номером ответа экзаменуемого
     QString comment = helpLabel->text();
@@ -156,10 +154,8 @@ void TrainingQuestionWidget::makeGUI() {
     // Кнопки навигации
     QHBoxLayout* footer = new QHBoxLayout;
     footer->addStretch( 1 );
-    if(Config::inst().localMode) {// Кнопка вызова пояснения
-        helpButton = new QPushButton("ПОМОЩЬ");
-        footer->addWidget(helpButton, 0, Qt::AlignRight);
-    }
+    helpButton = new QPushButton("ПОМОЩЬ");
+    footer->addWidget(helpButton, 0, Qt::AlignRight);
     // Кнопка перехода к предыдущему вопросу
     prevButton = new QPushButton("НАЗАД");
     footer->addWidget(prevButton, 0, Qt::AlignRight);

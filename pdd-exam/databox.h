@@ -129,6 +129,12 @@ public:
      */
     void initByTheme(const uint themeNumber);
 
+    /**
+     * Формирование билета состоящего из вопросов тематического блока № blockNumber
+     * @param blockNumber номер тематического блока
+     */
+    void initThemeBlock(const uint blockNumber);
+
     uint getTaskQuestionsCount() const;
 
     /** Идентификаторы вопросов текущего билета */

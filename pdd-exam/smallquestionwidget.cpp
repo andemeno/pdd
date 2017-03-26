@@ -6,18 +6,25 @@
 
 using namespace pdd;
 
-SmallQuestionWidget::SmallQuestionWidget(const uint num, QWidget *parent)
+SmallQuestionWidget::SmallQuestionWidget(const uint num, const bool is_themes_test, QWidget *parent)
     : QWidget(parent)
     , number( num )
+    , themes_test(is_themes_test)
     , userAnswer(-1)
     , rightAnswer( DataBox::inst().getTaskQuestion(number).get_answer() )
     , name(DataBox::inst().getTaskQuestion(number).get_task().left(20))
-    , image( QString("%1%2").arg(Config::inst().abPathToImages.c_str()).arg(DataBox::inst().getTaskQuestion(number).get_image_name()))
+    , image(QPixmap(QString("%1%2").arg(Config::inst().abPathToImages.c_str()).arg(DataBox::inst().getTaskQuestion(number).get_image_name())))
     , color( "lightgrey" )
     , resultColor( "white" )
     , taskEnded( false ) {
 
-    name.append( "..." );
+    if(themes_test) {
+        name = QString("%1.%2").arg(
+                    DataBox::inst().getTaskQuestion(number).get_theme_number()).arg(
+                    DataBox::inst().getTaskQuestion(number).get_number());
+    } else {
+        name.append( "..." );
+    }
 
     DataBox& box = DataBox::inst();
     connect( &box, SIGNAL(failTask()), this, SLOT(onEndTask()) );
@@ -76,7 +83,9 @@ void SmallQuestionWidget::paintEvent( QPaintEvent* ) {
     uint text_spacing = painter.fontMetrics().lineSpacing()+2*offset_h;
 
     QRect imageRect( offset_w, offset_h, swidth-2*offset_w, height()-text_spacing-offset_h);
-    painter.drawPixmap( imageRect, image );
+    if(!themes_test) {
+        painter.drawPixmap( imageRect, image );
+    }
 
     QRect nameRect( 0, sheight-text_spacing, swidth, text_spacing );
     painter.drawText( nameRect, Qt::AlignCenter, name );

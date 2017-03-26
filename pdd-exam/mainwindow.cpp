@@ -91,7 +91,7 @@ MainWindow::MainWindow(QWidget *parent)
         client = new NetClient(serverAddr, serverPort, this);
         connect(client, SIGNAL(connected()), this, SLOT(onServerConnected()));
         connect(client, SIGNAL(disconnected()), this, SLOT(onServerDisconnected()));
-        connect(client, SIGNAL(registerTask(QString,uint,bool)), this, SLOT(onRegisterTask(QString,uint,bool)));
+        connect(client, SIGNAL(registerTask(uint,QString,uint,bool)), this, SLOT(onRegisterTask(uint,QString,uint,bool)));
         connect(client, SIGNAL(stopTask()), this, SLOT(onStopTaskByServer()));
     }
 
@@ -157,15 +157,16 @@ void MainWindow::onServerDisconnected() {
     setSelectorWidget();
 }
 
-void MainWindow::onRegisterTask(QString name, uint qcount, bool category_ab) {
+void MainWindow::onRegisterTask(uint id, QString name, uint qcount, bool category_ab) {
     questionsCount = qcount;
     category = category_ab;
     themeNum = 0;
     user_name = name;
 
-    //questionsCount = 0; // принудительнпя отладка теста оп темам
+//    questionsCount = 1; // принудительнпя отладка теста оп темам
+//    id = 3;
 
-    if(questionsCount > 0) {
+    if(id == 1) {
         QString headerText("экзамен на право управления транспортным средством. категория в/у: ");
         headerText += category_ab ? "В" : "СD";
         headerText += "\n";
@@ -173,15 +174,15 @@ void MainWindow::onRegisterTask(QString name, uint qcount, bool category_ab) {
         headerWidget->setMainText(headerText);
         setPromptWidget();
 
-    } else {
-        QString headerText("тестирование по темам. категория в/у: ");
+    } else if(id == 3) {
+        QString headerText("тестирование по темам, ");
+        headerText.append(QString("блок №%1").arg(questionsCount));
+        headerText += ". категория в/у: ";
         headerText += category_ab ? "В" : "СD";
         headerText += "\n";
         headerText += name;
         headerWidget->setMainText(headerText);
-
-        state = state_wait_start;
-        setSelectorWidget();
+        setTestThemeBlockWidget();
     }
 }
 
@@ -255,22 +256,15 @@ void MainWindow::setSelectorWidget() {
         setCentralWidget(w);
     } else {
 
-        if(state == state_wait_task) {
-            QLabel* w = new QLabel(QString("%1").arg(Config::inst().armNumber));
-            w->setAlignment(Qt::AlignCenter);
-            QFont font = w->font();
-            font.setPointSize(200);
-            w->setFont( font );
-            QPalette pal = w->palette();
-            pal.setColor(QPalette::WindowText, QColor("#0055ee"));
-            w->setPalette(pal);
-            setCentralWidget(w);
-
-        } else if(state == state_wait_start && questionsCount == 0) {
-            SelectorWidget* w = new SelectorWidget(true);
-            connect(w, SIGNAL(startTraining(bool,uint)), this, SLOT(onSelectTrainig(bool,uint)));
-            setCentralWidget(w);
-        }
+        QLabel* w = new QLabel(QString("%1").arg(Config::inst().armNumber));
+        w->setAlignment(Qt::AlignCenter);
+        QFont font = w->font();
+        font.setPointSize(200);
+        w->setFont( font );
+        QPalette pal = w->palette();
+        pal.setColor(QPalette::WindowText, QColor("#0055ee"));
+        w->setPalette(pal);
+        setCentralWidget(w);
     }
 }
 
@@ -290,7 +284,7 @@ void MainWindow::setPromptWidget() {
 
 void MainWindow::setTaskWidget() {
     DataBox::inst().initCommonTask(questionsCount);
-    TaskWidget* w = new TaskWidget;
+    TaskWidget* w = new TaskWidget(false);
     setCentralWidget(w);
     DataBox::inst().startTask();
     state = state_execute_task;
@@ -302,6 +296,13 @@ void MainWindow::setTrainingWidget() {
     setCentralWidget(w);
     if(Config::inst().localMode) state = state_view_results;
     else state = state_execute_task;
+}
+
+void MainWindow::setTestThemeBlockWidget() {
+    DataBox::inst().initThemeBlock(themeNum);
+    TaskWidget* w = new TaskWidget(true);
+    setCentralWidget(w);
+    state = state_execute_task;
 }
 
 void MainWindow::about() {

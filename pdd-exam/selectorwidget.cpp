@@ -14,21 +14,16 @@
 
 using namespace pdd;
 
-SelectorWidget::SelectorWidget(const bool only_themes_flag, QWidget *parent)
+SelectorWidget::SelectorWidget(QWidget *parent)
     : QWidget(parent)
-    , only_themes(only_themes_flag)
     , choise( 0 ) {
 
     makeGUI();
 
     connect( selector, SIGNAL(buttonClicked(int)), this, SLOT(onSelect(int)) );
     connect( startButton, SIGNAL(clicked(bool)), this, SLOT(onStartClick()) );
-    if(Config::inst().localMode)
-        connect( exitButton, SIGNAL(clicked(bool)), this, SLOT(onStopClick()) );
-
-    if(only_themes) {
-        selector->button(1)->click();
-    }
+    connect( exitButton, SIGNAL(clicked(bool)), this, SLOT(onStopClick()) );
+    //selector->button(1)->click();
 }
 
 
@@ -79,15 +74,13 @@ void SelectorWidget::makeGUI() {
     }
     mainLayout->addWidget( abThemesCombo );
 
-    if(!only_themes) {
-        btn = new QRadioButton( "Тест на 20 вопросов (АВ). Время выполнения 20 минут." );
-        selector->addButton( btn, 2 );
-        mainLayout->addWidget( btn );
+    btn = new QRadioButton( "Тест на 20 вопросов (АВ). Время выполнения 20 минут." );
+    selector->addButton( btn, 2 );
+    mainLayout->addWidget( btn );
 
-        btn = new QRadioButton( "Тест на 40 вопросов (АВ). Время выполнения 30 минут." );
-        selector->addButton( btn, 3 );
-        mainLayout->addWidget( btn );
-    }
+    btn = new QRadioButton( "Тест на 40 вопросов (АВ). Время выполнения 30 минут." );
+    selector->addButton( btn, 3 );
+    mainLayout->addWidget( btn );
 
 //    mainLayout->addSpacing( 30 );
 

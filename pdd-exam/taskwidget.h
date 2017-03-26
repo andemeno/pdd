@@ -15,7 +15,7 @@ class SmallQuestionEnumWidget;
 class TaskWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit TaskWidget(QWidget *parent = 0);
+    explicit TaskWidget(const bool is_themes_test, QWidget *parent = 0);
 
 public slots:
     void onPrevQuestion(uint n);
@@ -33,6 +33,7 @@ private:
     QuestionsEnumWidget* enumWidget;
     SmallQuestionEnumWidget* smallEnumWidget;
     bool taskEnded;
+    bool themes_test = false;
 };
 
 }

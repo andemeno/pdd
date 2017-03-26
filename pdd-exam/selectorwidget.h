@@ -12,7 +12,7 @@ namespace pdd {
 class SelectorWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit SelectorWidget(const bool only_themes_flag = false, QWidget *parent = 0);
+    explicit SelectorWidget(QWidget *parent = 0);
     uint getThemeNumber() const;
 
 signals:

@@ -14,7 +14,7 @@ public:
 signals:
     void connected();
     void disconnected();
-    void registerTask(QString name, uint qcount, bool category_ab);
+    void registerTask(const uint id, QString name, uint qcount, bool category_ab);
     void stopTask();
 
 public slots:

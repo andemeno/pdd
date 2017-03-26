@@ -13,11 +13,12 @@
 
 using namespace pdd;
 
-QuestionWidget::QuestionWidget(const uint n, QWidget *parent)
+QuestionWidget::QuestionWidget(const uint n, const bool is_themes_test, QWidget *parent)
     : QWidget(parent)
     , number( n )
     , choise(-1)
-    , rightAnswer(-1) {
+    , rightAnswer(-1)
+    , themes_test(is_themes_test) {
 
     makeGUI();
 
@@ -68,7 +69,10 @@ void QuestionWidget::onConfirmButton() {
     emit answerQuestion(number, choise);
     emit showEnum();
 
-    DataBox::inst().setAnswer(number, choise);
+    if(themes_test)
+        DataBox::inst().setAnswerOnThemes(number, choise);
+    else
+        DataBox::inst().setAnswer(number, choise);
 }
 
 

@@ -22,7 +22,7 @@ private slots:
     void onServerConnected();
     void onServerDisconnected();
     // Регистарция задания от сервера
-    void onRegisterTask(QString name, uint qcount, bool category_ab);
+    void onRegisterTask(uint id, QString name, uint qcount, bool category_ab);
     // Оператор выбрал задание
     void onSelectTask(bool category_ab, uint qcount);
     // Оператор выбрал тренировку
@@ -39,6 +39,7 @@ private:
     void setPromptWidget();
     void setTaskWidget();
     void setTrainingWidget();
+    void setTestThemeBlockWidget();
 
     enum {
         state_wait_task, // ждем задание от сервера

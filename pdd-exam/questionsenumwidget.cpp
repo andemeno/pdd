@@ -9,8 +9,8 @@
 
 using namespace pdd;
 
-QuestionsEnumWidget::QuestionsEnumWidget(QWidget *parent)
-    : QWidget(parent) {
+QuestionsEnumWidget::QuestionsEnumWidget(const bool is_themes_test, QWidget *parent)
+    : QWidget(parent), themes_test(is_themes_test) {
 
     makeGUI();
 
@@ -26,7 +26,7 @@ void QuestionsEnumWidget::onExtraTask() {
     int row = gridLayout->rowCount();
     int column = 0;
     for( uint i = firstExtNumber; i < task_questions_count; ++i ) {
-        SmallQuestionWidget* w = new SmallQuestionWidget(i);
+        SmallQuestionWidget* w = new SmallQuestionWidget(i, themes_test);
         connect(w, SIGNAL(selectQuestion(int)), this, SIGNAL(selectQuestion(int)));
         connect(this, SIGNAL(answerQuestion(uint,uint)), w, SLOT(onAnswerQuestion(uint,uint)));
         gridLayout->addWidget( w, row, column );
@@ -54,13 +54,20 @@ void QuestionsEnumWidget::makeGUI() {
     int row = 0;
     int column = 0;
     for( uint i = 0; i < task_questions_count; ++i ) {
-        SmallQuestionWidget* w = new SmallQuestionWidget(i);
+        SmallQuestionWidget* w = new SmallQuestionWidget(i, themes_test);
         connect(w, SIGNAL(selectQuestion(int)), this, SIGNAL(selectQuestion(int)));
         connect(this, SIGNAL(answerQuestion(uint,uint)), w, SLOT(onAnswerQuestion(uint,uint)));
         gridLayout->addWidget( w, row, column );
         column++;
-        if( column > 4 ) {
-            column = 0; row++;
+
+        if(themes_test) {
+            if( column > 10 ) {
+                column = 0; row++;
+            }
+        } else {
+            if( column > 4 ) {
+                column = 0; row++;
+            }
         }
     }
 

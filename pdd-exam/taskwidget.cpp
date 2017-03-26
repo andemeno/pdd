@@ -11,17 +11,20 @@
 
 using namespace pdd;
 
-TaskWidget::TaskWidget(QWidget *parent)
+TaskWidget::TaskWidget(const bool is_themes_test, QWidget *parent)
     : QWidget(parent)
-    , taskEnded(false) {
+    , taskEnded(false)
+    , themes_test(is_themes_test) {
 
     makeGUI();
 
     DataBox& box = DataBox::inst();
     connect(&box, SIGNAL(failTask()), this, SLOT(onEndTask()));
     connect(&box, SIGNAL(successTask()), this, SLOT(onEndTask()));
-    connect(&box, SIGNAL(failTask()), smallEnumWidget, SLOT(onEndTask()));
-    connect(&box, SIGNAL(successTask()), smallEnumWidget, SLOT(onEndTask()));
+    if(!themes_test) {
+        connect(&box, SIGNAL(failTask()), smallEnumWidget, SLOT(onEndTask()));
+        connect(&box, SIGNAL(successTask()), smallEnumWidget, SLOT(onEndTask()));
+    }
     connect(&box, SIGNAL(extraTask(uint)), this, SLOT(onExtraTask()));
 }
 
@@ -45,7 +48,8 @@ void TaskWidget::onPrevQuestion(uint n) {
     }
 
     onShowQuestionWidget(n);
-    smallEnumWidget->onSelectQuestion(n);
+    if(!themes_test)
+        smallEnumWidget->onSelectQuestion(n);
 }
 
 
@@ -65,7 +69,8 @@ void TaskWidget::onNextQuestion(uint n) {
     }
 
     onShowQuestionWidget(n);
-    smallEnumWidget->onSelectQuestion(n);
+    if(!themes_test)
+        smallEnumWidget->onSelectQuestion(n);
 }
 
 
@@ -76,7 +81,8 @@ void TaskWidget::onEndTask() {
 
 void TaskWidget::showEnum() {
     stacked->setCurrentIndex(stacked->count()-1);
-    smallEnumWidget->hide();
+    if(!themes_test)
+        smallEnumWidget->hide();
 }
 
 
@@ -87,15 +93,17 @@ void TaskWidget::onExtraTask() {
     const uint task_questions_count = DataBox::inst().getTaskQuestionsCount();
     uint firstExtNumber = task_questions_count - count;
     for( uint i = firstExtNumber; i < task_questions_count; ++i ) {
-        QuestionWidget* w = new QuestionWidget(i);
+        QuestionWidget* w = new QuestionWidget(i, themes_test);
         connect( w, SIGNAL(prevQuestion(uint)), this, SLOT(onPrevQuestion(uint)) );
         connect( w, SIGNAL(nextQuestion(uint)), this, SLOT(onNextQuestion(uint)) );
         connect( w, SIGNAL(answerQuestion(uint,uint)), enumWidget, SIGNAL(answerQuestion(uint,uint)) );
-        connect( w, SIGNAL(answerQuestion(uint,uint)), smallEnumWidget, SLOT(onAnswerQuestion(uint)) );
+        if(!themes_test)
+            connect( w, SIGNAL(answerQuestion(uint,uint)), smallEnumWidget, SLOT(onAnswerQuestion(uint)) );
         connect( w, SIGNAL(showEnum()), this, SLOT(showEnum()) );
         stacked->insertWidget(i, w);
     }
-    smallEnumWidget->onExtraTask();
+    if(!themes_test)
+        smallEnumWidget->onExtraTask();
     showEnum();
 }
 
@@ -113,24 +121,27 @@ void TaskWidget::onShowQuestionWidget(int n) {
 void TaskWidget::makeGUI() {
     mainLayout = new QVBoxLayout;
 
-    smallEnumWidget = new SmallQuestionEnumWidget;
-    QHBoxLayout* sehbox = new QHBoxLayout;
-    sehbox->addWidget( smallEnumWidget, 0, Qt::AlignLeft );
-    mainLayout->addLayout( sehbox );
+    if(!themes_test) {
+        smallEnumWidget = new SmallQuestionEnumWidget;
+        QHBoxLayout* sehbox = new QHBoxLayout;
+        sehbox->addWidget( smallEnumWidget, 0, Qt::AlignLeft );
+        mainLayout->addLayout( sehbox );
+    }
 
     stacked = new QStackedLayout;
-    enumWidget = new QuestionsEnumWidget;
+    enumWidget = new QuestionsEnumWidget(themes_test);
     connect(enumWidget, SIGNAL(selectQuestion(int)), this, SLOT(onShowQuestionWidget(int)));
-    connect(enumWidget, SIGNAL(selectQuestion(int)), smallEnumWidget, SLOT(onSelectQuestion(int)));
+    if(!themes_test)
+        connect(enumWidget, SIGNAL(selectQuestion(int)), smallEnumWidget, SLOT(onSelectQuestion(int)));
 
-    //const DataBox::questions_array& questions = DataBox::inst().getQuestions();
     const uint task_questions_count = DataBox::inst().getTaskQuestionsCount();
     for( uint i = 0; i < task_questions_count; ++i ) {
-        QuestionWidget* w = new QuestionWidget(i);
+        QuestionWidget* w = new QuestionWidget(i, themes_test);
         connect( w, SIGNAL(prevQuestion(uint)), this, SLOT(onPrevQuestion(uint)) );
         connect( w, SIGNAL(nextQuestion(uint)), this, SLOT(onNextQuestion(uint)) );
         connect( w, SIGNAL(answerQuestion(uint,uint)), enumWidget, SIGNAL(answerQuestion(uint,uint)) );
-        connect( w, SIGNAL(answerQuestion(uint,uint)), smallEnumWidget, SLOT(onAnswerQuestion(uint)) );
+        if(!themes_test)
+            connect( w, SIGNAL(answerQuestion(uint,uint)), smallEnumWidget, SLOT(onAnswerQuestion(uint)) );
         connect( w, SIGNAL(showEnum()), this, SLOT(showEnum()) );
         stacked->addWidget(w);
     }

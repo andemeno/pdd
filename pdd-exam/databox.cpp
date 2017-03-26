@@ -190,6 +190,35 @@ void DataBox::initByTheme(const uint themeNumber) {
     }
 }
 
+void DataBox::initThemeBlock(const uint blockNumber) {
+    Category* category = &ab;
+    if(!category->loaded) return;
+
+    task.clear();
+    errors.clear();
+    totalAnswers = 0;
+    totalExtraQuestions = 0;
+
+    // Номер 1-ой темы выбирается так, чтобы получились блоки по 200 вопросов
+    uint themeNumber = 0;
+    if(blockNumber == 1) themeNumber = 0;
+    else if(blockNumber == 2) themeNumber = 4;
+    else if(blockNumber == 3) themeNumber = 10;
+    else if(blockNumber == 4) themeNumber = 13;
+
+    uint total_count = 0;
+    while(total_count < 200) {
+
+        const uint quest_count = category->doc->get_questions_count(themeNumber+1);
+        for(uint n = 1; n <= quest_count; ++n) {
+            task.push_back(category->doc->get_question(themeNumber+1, n).get_id());
+        }
+
+        total_count += quest_count;
+        themeNumber++;
+    }
+}
+
 uint DataBox::getTaskQuestionsCount() const {
     return task.size();
 }
@@ -338,7 +367,7 @@ void DataBox::setAnswerOnThemes(const uint number, const uint answer) {
 
     uint right_answer = ab.doc->get_question(task[number].qid).get_answer();
     // Номер вопроса в сигнале задаем = 0, таким образом в оработчике отличим его от "экзаменационного" сигнала
-    emit questionAnswered(0, task[number].qid, task[number].answer, right_answer);
+    emit questionAnswered(number, task[number].qid, task[number].answer, right_answer);
 
     if(task.size() == totalAnswers) // вопросы закончились, критериев оценки нет, поэтому всегда успех
         emit successTask();

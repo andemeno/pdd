@@ -13,7 +13,7 @@ class AnswerWidget;
 class QuestionWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit QuestionWidget(const uint n, QWidget *parent = 0);
+    explicit QuestionWidget(const uint n, const bool is_themes_test, QWidget *parent = 0);
 
 signals:
     void nextQuestion(uint nunber);
@@ -47,6 +47,7 @@ private:
     QPushButton* nextButton; /// Кнопка для перехода к следующему вопросу
     QLabel* resultLabel; /// Надпись с результатом ответа на вопрос
 
+    bool themes_test;
 };
 
 }

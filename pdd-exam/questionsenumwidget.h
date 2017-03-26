@@ -12,7 +12,7 @@ namespace pdd {
 class QuestionsEnumWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit QuestionsEnumWidget(QWidget *parent = 0);
+    explicit QuestionsEnumWidget(const bool is_themes_test, QWidget *parent = 0);
 
 signals:
     void selectQuestion(int number);
@@ -26,6 +26,7 @@ private:
     void makeGUI();
     //QLabel* resultLabel;
     QGridLayout* gridLayout;
+    bool themes_test;
 };
 
 

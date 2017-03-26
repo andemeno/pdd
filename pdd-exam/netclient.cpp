@@ -104,29 +104,16 @@ void NetClient::sendAnswerPacket(const uint qn, const uint qid, const uint an, c
         out.writeRawData( (char*)&rightAnswerNumber, sizeof(rightAnswerNumber));
 
     } else if(Config::inst().protocolVersion == 1) {
-        if(qn > 0) { // это экзамен
-            QByteArray msg(7, 0);
-            msg[0] = 7;
-            msg[1] = 3;
-            msg[2] = qn;
-            char* ptrMsg = msg.data();
-            quint16* ptr = (quint16*)(&ptrMsg[3]);
-            *ptr = (quint16)qid;
-            msg[5] = an;
-            msg[6] = ran;
-            out.writeRawData(msg.constData(), msg.size());
-
-        } else { // это тестирование по темам
-            QByteArray msg(6, 0);
-            msg[0] = 6;
-            msg[1] = 6;
-            char* ptrMsg = msg.data();
-            quint16* ptr = (quint16*)(&ptrMsg[2]);
-            *ptr = (quint16)qid;
-            msg[4] = an;
-            msg[5] = ran;
-            out.writeRawData(msg.constData(), msg.size());
-        }
+        QByteArray msg(7, 0);
+        msg[0] = 7;
+        msg[1] = 3;
+        msg[2] = qn;
+        char* ptrMsg = msg.data();
+        quint16* ptr = (quint16*)(&ptrMsg[3]);
+        *ptr = (quint16)qid;
+        msg[5] = an;
+        msg[6] = ran;
+        out.writeRawData(msg.constData(), msg.size());
     }
 }
 
@@ -246,7 +233,7 @@ void NetClient::onReadyRead() {
                 //qDebug() << "Name " << userName;
                 cmdCode = -1;
 
-                emit registerTask(userName, questionsCount, (categoryType==0 ? true : false));
+                emit registerTask(0, userName, questionsCount, (categoryType==0 ? true : false));
             }
 
         } else if(cmdCode == 3) {
@@ -267,7 +254,7 @@ void NetClient::onReadyRead() {
         quint8 packetId;
         in.readRawData( (char*)&packetId, sizeof(quint8) );
 
-        if(packetId == 1) { // Регистрация задания
+        if(packetId == 1 || packetId == 3) { // Регистрация задания - экзамен
             in.readRawData( (char*)&questionsCount, sizeof(quint8) );
             quint8 category = 0;
             in.readRawData( (char*)&category, sizeof(quint8) );
@@ -277,7 +264,7 @@ void NetClient::onReadyRead() {
             in.readRawData(name.data(), packetSize-4);
             QTextCodec* codec = QTextCodec::codecForName("UTF-16");
             userName = codec->toUnicode(name);
-            emit registerTask(userName, questionsCount, ((categoryType==0 || categoryType==1) ? true : false));
+            emit registerTask(packetId, userName, questionsCount, ((categoryType==0 || categoryType==1) ? true : false));
 
         } else if(packetId == 2) { // Окончание задания
             userName.clear();

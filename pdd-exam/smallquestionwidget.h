@@ -9,7 +9,7 @@ namespace pdd {
 class SmallQuestionWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit SmallQuestionWidget(const uint num, QWidget *parent = 0);
+    explicit SmallQuestionWidget(const uint num, const bool is_themes_test, QWidget *parent = 0);
 
 signals:
     void selectQuestion(int n);
@@ -27,6 +27,7 @@ protected:
 private:
     void setColor( const QColor& c );
     uint number;
+    bool themes_test;
     int userAnswer;
     int rightAnswer;
     QString name;
@@ -35,6 +36,7 @@ private:
     QColor color;
     QColor resultColor;
     bool taskEnded;
+
 };
 
 }
