@@ -22,7 +22,8 @@ private slots:
     void onServerConnected();
     void onServerDisconnected();
     // Регистарция задания от сервера
-    void onRegisterTask(uint id, QString name, uint qcount, bool category_ab);
+    void onRegisterTask(QString name, uint qcount, bool category_ab);
+    void onRegisterTest(QString name, const uint theme_n, const uint quest_n, const uint qcount, const bool category_ab);
     // Оператор выбрал задание
     void onSelectTask(bool category_ab, uint qcount);
     // Оператор выбрал тренировку
@@ -51,6 +52,7 @@ private:
     int state;
     uint questionsCount;
     uint themeNum;
+    uint questionNum;
     bool category;
     QTimer timer;
     NetClient* client;

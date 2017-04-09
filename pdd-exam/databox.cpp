@@ -190,7 +190,7 @@ void DataBox::initByTheme(const uint themeNumber) {
     }
 }
 
-void DataBox::initThemeBlock(const uint blockNumber) {
+void DataBox::initQuestionBlock(const uint th_n, const uint quest_n, const uint count) {
     Category* category = &ab;
     if(!category->loaded) return;
 
@@ -198,25 +198,26 @@ void DataBox::initThemeBlock(const uint blockNumber) {
     errors.clear();
     totalAnswers = 0;
     totalExtraQuestions = 0;
-
-    // Номер 1-ой темы выбирается так, чтобы получились блоки по 200 вопросов
-    uint themeNumber = 0;
-    if(blockNumber == 1) themeNumber = 0;
-    else if(blockNumber == 2) themeNumber = 4;
-    else if(blockNumber == 3) themeNumber = 10;
-    else if(blockNumber == 4) themeNumber = 13;
+    all_answers_right = true;
 
     uint total_count = 0;
-    while(total_count < 200) {
+    uint tn = th_n + 1;
+    uint qn = quest_n + 1;
 
-        const uint quest_count = category->doc->get_questions_count(themeNumber+1);
-        for(uint n = 1; n <= quest_count; ++n) {
-            task.push_back(category->doc->get_question(themeNumber+1, n).get_id());
+    do {
+
+        const uint quest_count = category->doc->get_questions_count(tn);
+        for(uint n = qn; n <= quest_count; ++n) {
+            task.push_back(category->doc->get_question(tn, n).get_id());
+            ++total_count;
+            if(total_count == count)
+                break;
         }
+        ++tn;
+        qn = 1;
 
-        total_count += quest_count;
-        themeNumber++;
-    }
+    } while(total_count < count);
+
 }
 
 uint DataBox::getTaskQuestionsCount() const {
@@ -366,11 +367,17 @@ void DataBox::setAnswerOnThemes(const uint number, const uint answer) {
     ++totalAnswers;
 
     uint right_answer = ab.doc->get_question(task[number].qid).get_answer();
-    // Номер вопроса в сигнале задаем = 0, таким образом в оработчике отличим его от "экзаменационного" сигнала
+    if(right_answer != answer)
+        all_answers_right = false;
     emit questionAnswered(number, task[number].qid, task[number].answer, right_answer);
 
-    if(task.size() == totalAnswers) // вопросы закончились, критериев оценки нет, поэтому всегда успех
-        emit successTask();
+    if(task.size() == totalAnswers) { // вопросы закончились
+        // критериев оценки нет, поэтому если нет ни одной ошибки, то успех
+        if(all_answers_right)
+            emit successTask();
+        else // в остальных случаях - провал
+            emit failTask();
+    }
 }
 
 

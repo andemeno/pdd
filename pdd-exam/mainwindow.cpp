@@ -20,7 +20,7 @@
 
 using namespace pdd;
 
-const QString version_info("Версия программы 1.4 от 08-03-17");
+const QString version_info("Версия программы 1.5 от 09-04-17");
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -91,7 +91,8 @@ MainWindow::MainWindow(QWidget *parent)
         client = new NetClient(serverAddr, serverPort, this);
         connect(client, SIGNAL(connected()), this, SLOT(onServerConnected()));
         connect(client, SIGNAL(disconnected()), this, SLOT(onServerDisconnected()));
-        connect(client, SIGNAL(registerTask(uint,QString,uint,bool)), this, SLOT(onRegisterTask(uint,QString,uint,bool)));
+        connect(client, SIGNAL(registerTask(QString,uint,bool)), this, SLOT(onRegisterTask(QString,uint,bool)));
+        connect(client, SIGNAL(registerTest(QString,uint,uint,uint,bool)), this, SLOT(onRegisterTest(QString,uint,uint,uint,bool)));
         connect(client, SIGNAL(stopTask()), this, SLOT(onStopTaskByServer()));
     }
 
@@ -157,33 +158,48 @@ void MainWindow::onServerDisconnected() {
     setSelectorWidget();
 }
 
-void MainWindow::onRegisterTask(uint id, QString name, uint qcount, bool category_ab) {
+void MainWindow::onRegisterTask(QString name, uint qcount, bool category_ab) {
     questionsCount = qcount;
     category = category_ab;
     themeNum = 0;
+    questionNum = 0;
     user_name = name;
 
-//    questionsCount = 1; // принудительнпя отладка теста оп темам
-//    id = 3;
+    QString headerText("экзамен на право управления транспортным средством. категория в/у: ");
+    headerText += category_ab ? "В" : "СD";
+    headerText += "\n";
+    headerText += name;
+    headerWidget->setMainText(headerText);
+    setPromptWidget();
+}
 
-    if(id == 1) {
-        QString headerText("экзамен на право управления транспортным средством. категория в/у: ");
-        headerText += category_ab ? "В" : "СD";
-        headerText += "\n";
-        headerText += name;
-        headerWidget->setMainText(headerText);
-        setPromptWidget();
+void MainWindow::onRegisterTest(QString name, const uint theme_n, const uint quest_n, const uint qcount, const bool category_ab) {
+    questionsCount = qcount;
+    category = category_ab;
+    themeNum = theme_n;
+    questionNum = quest_n;
+    user_name = name;
 
-    } else if(id == 3) {
-        QString headerText("тестирование по темам, ");
-        headerText.append(QString("блок №%1").arg(questionsCount));
-        headerText += ". категория в/у: ";
-        headerText += category_ab ? "В" : "СD";
-        headerText += "\n";
-        headerText += name;
-        headerWidget->setMainText(headerText);
-        setTestThemeBlockWidget();
+    if(themeNum < 1 || themeNum > 28) {
+        QMessageBox msgBox;
+        msgBox.setText(QString("Некорректный номер темы (%1)").arg(themeNum));
+        msgBox.exec();
     }
+
+    if(questionsCount < 1 || questionsCount > 800) {
+        QMessageBox msgBox;
+        msgBox.setText(QString("Некорректное количество вопросов (%1)").arg(questionsCount));
+        msgBox.exec();
+    }
+
+    QString headerText("тестирование, ");
+    headerText.append(QString("№%1 вопросов начиная с %2.%3").arg(questionsCount).arg(themeNum).arg(questionNum));
+    headerText += ". категория в/у: ";
+    headerText += category_ab ? "В" : "СD";
+    headerText += "\n";
+    headerText += name;
+    headerWidget->setMainText(headerText);
+    setTestThemeBlockWidget();
 }
 
 void MainWindow::onSelectTask(bool category_ab, uint qcount) {
@@ -299,7 +315,7 @@ void MainWindow::setTrainingWidget() {
 }
 
 void MainWindow::setTestThemeBlockWidget() {
-    DataBox::inst().initThemeBlock(themeNum);
+    DataBox::inst().initQuestionBlock(themeNum-1, questionNum-1, questionsCount);
     TaskWidget* w = new TaskWidget(true);
     setCentralWidget(w);
     state = state_execute_task;

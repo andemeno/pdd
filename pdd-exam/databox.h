@@ -91,6 +91,8 @@ private:
     uint elapsedTaskTime; /// Время, затраченное на выполнение текущего блока вопросов (оснвного или дополнительного)
     uint totalElapsedTaskTime; /// Время, затарченное на выполнение всего билета
 
+    bool all_answers_right = true; /// Признак, что все отвветы верные. Используется только для теста по блоку вопросов
+
 signals:
     void taskStarted(); /// Сигнал "начался экзамен"
     void failTask(); /// Сигнал "экзамен НЕ СДАН"
@@ -133,7 +135,7 @@ public:
      * Формирование билета состоящего из вопросов тематического блока № blockNumber
      * @param blockNumber номер тематического блока
      */
-    void initThemeBlock(const uint blockNumber);
+    void initQuestionBlock(const uint th_n, const uint quest_n, const uint count);
 
     uint getTaskQuestionsCount() const;
 

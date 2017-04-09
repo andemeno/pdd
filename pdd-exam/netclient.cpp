@@ -194,7 +194,7 @@ void NetClient::onReadyRead() {
 
     //qDebug() << "Avialible " << socket->bytesAvailable() << " bytes";
 
-    if(Config::inst().protocolVersion == 0) { // Проткол версии 0
+    if(Config::inst().protocolVersion == 0) { // Протокол версии 0
 
         if(cmdCode == -1) {
             if(socket->bytesAvailable() < (int)sizeof(quint32))
@@ -233,7 +233,7 @@ void NetClient::onReadyRead() {
                 //qDebug() << "Name " << userName;
                 cmdCode = -1;
 
-                emit registerTask(0, userName, questionsCount, (categoryType==0 ? true : false));
+                emit registerTask(userName, questionsCount, (categoryType==0 ? true : false));
             }
 
         } else if(cmdCode == 3) {
@@ -254,7 +254,7 @@ void NetClient::onReadyRead() {
         quint8 packetId;
         in.readRawData( (char*)&packetId, sizeof(quint8) );
 
-        if(packetId == 1 || packetId == 3) { // Регистрация задания - экзамен
+        if(packetId == 1) { // Регистрация задания - экзамен
             in.readRawData( (char*)&questionsCount, sizeof(quint8) );
             quint8 category = 0;
             in.readRawData( (char*)&category, sizeof(quint8) );
@@ -264,13 +264,33 @@ void NetClient::onReadyRead() {
             in.readRawData(name.data(), packetSize-4);
             QTextCodec* codec = QTextCodec::codecForName("UTF-16");
             userName = codec->toUnicode(name);
-            emit registerTask(packetId, userName, questionsCount, ((categoryType==0 || categoryType==1) ? true : false));
+            emit registerTask(userName, questionsCount, ((categoryType==0 || categoryType==1) ? true : false));
+            //emit registerTest(userName, 1, 1, 5, true); // принудительная отладка теста по вопросам
 
         } else if(packetId == 2) { // Окончание задания
             userName.clear();
             categoryType = -1;
             questionsCount = 0;
             emit stopTask();
+
+        } else if(packetId == 3) { // Регистрация задания - тест
+            questionsCount = 0;
+            quint8 th_n = 0;
+            in.readRawData( (char*)&th_n, sizeof(quint8) );
+            quint8 quest_n = 0;
+            in.readRawData( (char*)&quest_n, sizeof(quint8) );
+            quint16 qcount = 0;
+            in.readRawData( (char*)&qcount, sizeof(quint16) );
+            quint8 category = 0;
+            in.readRawData( (char*)&category, sizeof(quint8) );
+            categoryType = category;
+
+            QByteArray name(packetSize-7, 0);
+            in.readRawData(name.data(), packetSize-7);
+            QTextCodec* codec = QTextCodec::codecForName("UTF-16");
+            userName = codec->toUnicode(name);
+            emit registerTest(userName, th_n, quest_n, qcount,
+                              ((categoryType==0 || categoryType==1) ? true : false));
         }
     }
 }
